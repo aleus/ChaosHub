@@ -1,7 +1,7 @@
 /// @author M. A. Serebrennikov
 #pragma once
 
-#include "ChaosTypedef.h"
+#include "PointersTypedef.h"
 
 #include <QObject>
 #include <QVector>

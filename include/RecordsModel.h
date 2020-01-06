@@ -1,7 +1,7 @@
 /// @author M. A. Serebrennikov
 #pragma once
 
-#include "ChaosTypedef.h"
+#include "PointersTypedef.h"
 
 #include <QAbstractListModel>
 #include <QVector>
@@ -77,7 +77,6 @@ class RecordsModel: public QAbstractListModel
         void loadLimitChanged() const;
         void lazyLoadThresholdChanged() const;
         void startLazyLoad() const;
-        void allLoaded() const;
 
     private:
         QString _tag;

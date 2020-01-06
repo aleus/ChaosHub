@@ -19,8 +19,8 @@ void RecordsModel::setTag(const QString &tag)
 
     if (_tag != tag) {
         _tag = tag;
-
         reloadRecords();
+        emit tagChanged();
     }
 }
 

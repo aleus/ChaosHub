@@ -17,6 +17,7 @@ QVector<RecordPtr> RecordsMaster::get(const QString &tag, int limit, int offset)
     QVector<RecordPtr> result;
 
 
+
     return result;
 }
 
