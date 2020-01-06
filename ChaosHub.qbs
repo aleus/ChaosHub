@@ -10,6 +10,18 @@ Project {
 
         files: [
             "README.md",
+            "include/ChaosTypedef.h",
+            "include/Record.h",
+            "include/RecordContent.h",
+            "include/RecordsMaster.h",
+            "include/RecordsModel.h",
+            "include/Storage.h",
+            "include/TextNote.h",
+            "source/Record.cpp",
+            "source/RecordsMaster.cpp",
+            "source/RecordsModel.cpp",
+            "source/Storage.cpp",
+            "source/TextNote.cpp",
             "source/main.cpp",
             "qml/qml.qrc",
             "translations/ChaosHub_ru_RU.ts",
