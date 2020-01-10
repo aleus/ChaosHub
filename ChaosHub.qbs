@@ -7,7 +7,6 @@ Project {
     ]
 
     Application {
-
         files: [
             "README.md",
             "include/PointersTypedef.h",
@@ -19,6 +18,7 @@ Project {
             "include/TextNote.h",
             "include/Tools.h",
             "source/Record.cpp",
+            "source/RecordContent.cpp",
             "source/RecordsMaster.cpp",
             "source/RecordsModel.cpp",
             "source/Storage.cpp",
@@ -31,13 +31,12 @@ Project {
 
         cpp.cxxLanguageVersion: "c++17"
         cpp.includePaths: ["include"]
-        cpp.defines: [
-            "QT_DEPRECATED_WARNINGS",
+
+        property pathList qmlImportPaths: [
+            sourceDirectory + "/qml",
         ]
 
-        property pathList qmlImportPaths: ["qml"]
-
-        Depends { name: "Qt"; submodules: ["core", "quick"] }
+        Depends { name: "Qt"; submodules: ["core", "quick", "widgets"] }
         Depends { name: "sqlite" }
         Depends { name: "botan" }
 

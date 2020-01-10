@@ -16,7 +16,13 @@ namespace tools {
  *
  * @sa https://en.wikipedia.org/wiki/Universally_unique_identifier#As_database_keys
  */
-QUuid createSeqUuid();
+QUuid createUuidSeq();
+
+/** Возвращает количество точек в логическом пикселе */
+double dp();
+
+/** Возвращает количество пикселей в мм экрана. */
+double mm();
 
 } // namespace tools {
 

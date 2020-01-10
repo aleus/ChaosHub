@@ -2,6 +2,7 @@
 #pragma once
 
 #include "PointersTypedef.h"
+#include "Record.h"
 
 #include <QObject>
 #include <QVector>
@@ -9,7 +10,7 @@
 namespace sp {
 
 /** Быстрое обращение к синглетону. */
-#define RecordsMasterI RecordsMaster::instance()
+#define RecordsMasterI sp::RecordsMaster::instance()
 
 /*************************************************************************//**
  * @brief Синглетон производит загрузку, удаление и изменение объектов
@@ -42,6 +43,9 @@ class RecordsMaster: public QObject
         void remove(const RecordPtr &record);
         void remove(const QVector<RecordPtr> &records);
         void remove(const QVector<QUuid> &records);
+
+    private:
+        RecordContentPtr loadContent(Record::Type type, int rowid);
 
     signals:
         void recordRemoved(RecordPtr record) const;

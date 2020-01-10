@@ -2,9 +2,11 @@
 #include "Tools.h"
 
 #include <QDateTime>
+#include <QApplication>
+#include <QScreen>
 
 using namespace sp;
-QUuid tools::createSeqUuid()
+QUuid tools::createUuidSeq()
 {
     QUuid result = QUuid::createUuid();
     quint64 curtime = QDateTime::currentMSecsSinceEpoch();
@@ -17,5 +19,28 @@ QUuid tools::createSeqUuid()
         memcpy(reinterpret_cast<char*>(&result), reinterpret_cast<char*>(&curtime)+2, 6);
     #endif
 
+    return result;
+}
+
+//------------------------------------------------------------------------------
+double tools::dp()
+{
+    #if defined(Q_OS_MAC)
+        static double const standardDPI = 72;
+    #elif defined(Q_OS_WIN)
+        static double const standardDPI = 96;
+    #else
+        static double const standardDPI = qApp->screens().first()->logicalDotsPerInch();
+    #endif
+
+    static const double result = qApp->screens().first()->logicalDotsPerInch() / standardDPI;
+    return result;
+}
+
+//------------------------------------------------------------------------------
+double tools::mm()
+{
+    static const double mmInInch = 25.4;
+    static double result =  qApp->screens().first()->physicalDotsPerInch()/mmInInch;
     return result;
 }

@@ -3,6 +3,8 @@
 #include "RecordsMaster.h"
 #include "RecordsModel.h"
 
+#include <QDebug>
+
 using namespace sp;
 
 RecordsModel::RecordsModel(QObject *parent)
@@ -44,6 +46,7 @@ int RecordsModel::rowCount(const QModelIndex &) const
 //------------------------------------------------------------------------------
 QVariant RecordsModel::data(const QModelIndex &index, int role) const
 {
+    qDebug() << "data";
     Q_ASSERT_X(!_tag.isEmpty(), "RecordsModel", "Нужно установить тег для работы модели.");
     Q_ASSERT(index.row() >= 0);
     if (!index.isValid() || index.row() >= _records.count()) {
@@ -58,12 +61,21 @@ QVariant RecordsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case 0:
+            qDebug() << "data" << index.row() << _records.value(index.row()).data();
             return QVariant::fromValue(_records.value(index.row()).data());
 
         default:
             Q_ASSERT(false);
             return QVariant();
     }
+}
+
+//------------------------------------------------------------------------------
+QHash<int, QByteArray> RecordsModel::roleNames() const
+{
+    QHash<int, QByteArray> result;
+    result.insert(0, QByteArrayLiteral("record"));
+    return result;
 }
 
 //------------------------------------------------------------------------------
