@@ -25,8 +25,4 @@ Item {
             rightMargin: Consts.margin
         }
     }
-
-    Component.onCompleted: {
-        console.log("item completed");
-    }
 }

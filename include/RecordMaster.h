@@ -10,19 +10,19 @@
 namespace sp {
 
 /** Быстрое обращение к синглетону. */
-#define RecordsMasterI sp::RecordsMaster::instance()
+#define RecordMasterI RecordMaster::instance()
 
 /*************************************************************************//**
  * @brief Синглетон производит загрузку, удаление и изменение объектов
  * класса Record.
  ****************************************************************************/
-class RecordsMaster: public QObject
+class RecordMaster: public QObject
 {
     Q_OBJECT
 
     public:
         /** Возвращает синглетон. */
-        static RecordsMaster& instance();
+        static RecordMaster& instance();
 
         //--------------------------------------------------------------------
         // Get
@@ -49,9 +49,10 @@ class RecordsMaster: public QObject
 
     signals:
         void recordRemoved(RecordPtr record) const;
+        void recordCreated(RecordPtr record) const;
 
     private:
-        RecordsMaster() = default;
+        RecordMaster() = default;
 };
 
 } // namespace sp

@@ -1,21 +1,24 @@
 /// @author M. A. Serebrennikov
 #include "Record.h"
-#include "RecordsMaster.h"
-#include "RecordsModel.h"
+#include "RecordMaster.h"
+#include "RecordModel.h"
 
 #include <QDebug>
 
 using namespace sp;
 
-RecordsModel::RecordsModel(QObject *parent)
+RecordModel::RecordModel(QObject *parent)
     : QAbstractListModel(parent)
 {
-    connect(this, &RecordsModel::startLazyLoad
-           ,this, &RecordsModel::lazyLoad, Qt::QueuedConnection);
+    connect(this, &RecordModel::startLazyLoad
+           ,this, &RecordModel::lazyLoad, Qt::QueuedConnection);
+
+    connect(&RecordMasterI, &RecordMaster::recordCreated
+           ,this, &RecordModel::onRecordCreated, Qt::QueuedConnection);
 }
 
 //------------------------------------------------------------------------------
-void RecordsModel::setTag(const QString &tag)
+void RecordModel::setTag(const QString &tag)
 {
     Q_ASSERT(!tag.isEmpty());
 
@@ -27,7 +30,7 @@ void RecordsModel::setTag(const QString &tag)
 }
 
 //------------------------------------------------------------------------------
-void RecordsModel::setLoadLimit(int loadCount)
+void RecordModel::setLoadLimit(int loadCount)
 {
     Q_ASSERT(loadCount > 0);
 
@@ -38,15 +41,14 @@ void RecordsModel::setLoadLimit(int loadCount)
 }
 
 //------------------------------------------------------------------------------
-int RecordsModel::rowCount(const QModelIndex &) const
+int RecordModel::rowCount(const QModelIndex &) const
 {
     return _records.count();
 }
 
 //------------------------------------------------------------------------------
-QVariant RecordsModel::data(const QModelIndex &index, int role) const
+QVariant RecordModel::data(const QModelIndex &index, int role) const
 {
-    qDebug() << "data";
     Q_ASSERT_X(!_tag.isEmpty(), "RecordsModel", "Нужно установить тег для работы модели.");
     Q_ASSERT(index.row() >= 0);
     if (!index.isValid() || index.row() >= _records.count()) {
@@ -61,7 +63,6 @@ QVariant RecordsModel::data(const QModelIndex &index, int role) const
 
     switch (role) {
         case 0:
-            qDebug() << "data" << index.row() << _records.value(index.row()).data();
             return QVariant::fromValue(_records.value(index.row()).data());
 
         default:
@@ -71,7 +72,7 @@ QVariant RecordsModel::data(const QModelIndex &index, int role) const
 }
 
 //------------------------------------------------------------------------------
-QHash<int, QByteArray> RecordsModel::roleNames() const
+QHash<int, QByteArray> RecordModel::roleNames() const
 {
     QHash<int, QByteArray> result;
     result.insert(0, QByteArrayLiteral("record"));
@@ -79,11 +80,11 @@ QHash<int, QByteArray> RecordsModel::roleNames() const
 }
 
 //------------------------------------------------------------------------------
-void RecordsModel::reloadRecords()
+void RecordModel::reloadRecords()
 {
     emit beginResetModel();
     _allLoaded = false;
-    _records = RecordsMasterI.get(_tag, _loadLimit);
+    _records = RecordMasterI.get(_tag, _loadLimit);
     emit endResetModel();
 
     if (_records.count() < _loadLimit) {
@@ -92,7 +93,7 @@ void RecordsModel::reloadRecords()
 }
 
 //------------------------------------------------------------------------------
-void RecordsModel::setLazyLoadThreshold(int lazyLoadThreshold)
+void RecordModel::setLazyLoadThreshold(int lazyLoadThreshold)
     {
         if (_lazyLoadThreshold != lazyLoadThreshold) {
         _lazyLoadThreshold = lazyLoadThreshold;
@@ -101,11 +102,11 @@ void RecordsModel::setLazyLoadThreshold(int lazyLoadThreshold)
 }
 
 //------------------------------------------------------------------------------
-void RecordsModel::lazyLoad()
+void RecordModel::lazyLoad()
 {
     Q_ASSERT(_records.count()); // Ленивая загрузка загружается только после загрузки хоть одной записи. Иначе должна работать reloadRecords.
 
-    auto newRecords = RecordsMasterI.get(_tag, _loadLimit, _records.count());
+    auto newRecords = RecordMasterI.get(_tag, _loadLimit, _records.count());
     if (!newRecords.count()) {
         _allLoaded = true;
         return;
@@ -118,4 +119,12 @@ void RecordsModel::lazyLoad()
     if (_records.count() < _loadLimit) {
         _allLoaded = true;
     }
+}
+
+//------------------------------------------------------------------------------
+void RecordModel::onRecordCreated(RecordPtr record)
+{
+    emit beginInsertRows(QModelIndex(), 0, 0);
+    _records.insert(0, record);
+    emit endInsertRows();
 }

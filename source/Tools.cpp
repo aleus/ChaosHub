@@ -44,3 +44,8 @@ double tools::mm()
     static double result =  qApp->screens().first()->physicalDotsPerInch()/mmInInch;
     return result;
 }
+
+//------------------------------------------------------------------------------
+Deferrer::Deferrer(std::function<void ()> &&func)
+    : _func(std::forward<decltype(func)>(func))
+{}

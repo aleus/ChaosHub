@@ -35,21 +35,4 @@ class TextNote: public RecordContent
         QString _text;
 };
 
-/***************************************************************************//**
- * @brief Класс для создания текстовой заметки из QMl.
- ******************************************************************************/
-class TextNoteMaster: public QObject
-{
-    Q_OBJECT
-
-    public:
-        TextNoteMaster() = default;
-
-        /** Создаёт новую текстовую заметку и отправляет в хранилище. */
-        Q_INVOKABLE static void create(const QString &text);
-
-        /** Загружает текстовую заметку из хранилища. */
-        static RecordContentPtr load(int rowid);
-};
-
 } // namespace sp

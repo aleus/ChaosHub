@@ -1,9 +1,10 @@
 /// @author M. A. Serebrennikov
 
 #include "Record.h"
-#include "RecordsMaster.h"
-#include "RecordsModel.h"
+#include "RecordMaster.h"
+#include "RecordModel.h"
 #include "Storage.h"
+#include "TextNoteMaster.h"
 #include "TextNote.h"
 #include "Tools.h"
 
@@ -13,6 +14,8 @@
 
 int main(int argc, char *argv[])
 {
+    using namespace sp;
+
     // Отключено qml кеширование, т.к. глючат иногда enum'ы.
     qputenv("QML_DISABLE_DISK_CACHE", "1");
 
@@ -23,18 +26,18 @@ int main(int argc, char *argv[])
     auto context = engine.rootContext();
 
     // Регистрация классов в QML
-    qRegisterMetaType<sp::Record *>("sp::Record *");
-    qRegisterMetaType<sp::RecordContent *>("sp::RecordContent *");
-    qRegisterMetaType<sp::TextNote *>("sp::TextNote *");
+    qRegisterMetaType<Record *>("Record *");
+    qRegisterMetaType<RecordContent *>("RecordContent *");
+    qRegisterMetaType<TextNote *>("TextNote *");
 
-    qmlRegisterType<sp::RecordsModel>("Sp", 1, 0, "RecordsModel");
-    qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", new sp::TextNoteMaster());
+    qmlRegisterType<RecordModel>("Sp", 1, 0, "RecordModel");
+    qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
 
     // Регистрация переменных в QML
-    context->setContextProperty("RecordsMaster", &RecordsMasterI);
+    context->setContextProperty("RecordMaster", &RecordMasterI);
     context->setContextProperty("Storage", &StorageI);
-    context->setContextProperty("dp", sp::tools::dp());
-    context->setContextProperty("mm", sp::tools::mm());
+    context->setContextProperty("dp", tools::dp());
+    context->setContextProperty("mm", tools::mm());
 
     // Загрузка QML
     const QUrl url(QStringLiteral("qrc:/main.qml"));

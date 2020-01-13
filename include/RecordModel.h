@@ -12,7 +12,7 @@ namespace sp {
  * @brief Модель списка записей заданного тега (категории).
  * @details При установки
  ****************************************************************************/
-class RecordsModel: public QAbstractListModel
+class RecordModel: public QAbstractListModel
 {
     Q_OBJECT
 
@@ -21,7 +21,7 @@ class RecordsModel: public QAbstractListModel
     Q_PROPERTY(int lazyLoadThreshold READ lazyLoadThreshold WRITE setLazyLoadThreshold NOTIFY lazyLoadThresholdChanged)
 
     public:
-        RecordsModel(QObject *parent = nullptr);
+        RecordModel(QObject *parent = nullptr);
 
         //--------------------------------------------------------------------
         // Get
@@ -72,6 +72,9 @@ class RecordsModel: public QAbstractListModel
     private slots:
         /** Подгружает записи из БД при пролистывании списка ближе к концу. */
         void lazyLoad();
+
+        /** При создании новой записи, показываем его, если нужно. */
+        void onRecordCreated(RecordPtr record);
 
     signals:
         void tagChanged() const;

@@ -1,30 +1,33 @@
 /// @author M. A. Serebrennikov
 #include "Record.h"
 #include "RecordContent.h"
-#include "RecordsMaster.h"
+#include "RecordMaster.h"
 #include "Storage.h"
 #include "Tools.h"
 #include "sqlite3.h"
-#include "TextNote.h"
+#include "TextNoteMaster.h"
 
 #include <QDebug>
 
 using namespace sp;
 
-RecordsMaster &RecordsMaster::instance()
+RecordMaster &RecordMaster::instance()
 {
-    static RecordsMaster master;
+    static RecordMaster master;
     return master;
 }
 
 //------------------------------------------------------------------------------
-QVector<RecordPtr> RecordsMaster::get(const QString &tag, int limit, int offset)
+QVector<RecordPtr> RecordMaster::get(const QString &tag, int limit, int offset)
 {
     QVector<RecordPtr> result;
 
     sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(StorageI.db(),
-                       "SELECT `id`, `type`, `contentId`, `date` from `Records`", -1, &stmt, NULL);
+    defer(sqlite3_finalize(stmt));
+
+    const char *query = "SELECT `id`, `type`, `contentId`, `date` from `Records` "
+                        "ORDER BY `date` DESC";
+    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
 
     for(;;) {
         int res = sqlite3_step (stmt);
@@ -32,14 +35,20 @@ QVector<RecordPtr> RecordsMaster::get(const QString &tag, int limit, int offset)
         if (res == SQLITE_ROW) {
             const void* buf = sqlite3_column_blob(stmt, 0);
             int bufsize = sqlite3_column_bytes(stmt, 0);
-            // Debug!!! 38 - количество символов в человеческом представлении UUid
-            // if (bufsize != sizeof (QUuid)) {
-            if (bufsize != 38) {
-                qCritical() << "Error of loading id of record, bufsize =" << bufsize;
-                Q_ASSERT(false);
-                continue;
+            QUuid id;
+            switch(bufsize) {
+                case 38: // количество символов в человеческом представлении UUID
+                    id = QUuid(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
+                    break;
+                case sizeof(QUuid):
+                    id = QUuid::fromRfc4122(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
+                    break;
+
+                default:
+                    qCritical() << "Error of loading id of record, bufsize =" << bufsize;
+                    Q_ASSERT(false);
+                    continue;
             }
-            QUuid id = QUuid(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
 
             auto type = static_cast<Record::Type>(sqlite3_column_int(stmt, 1));
             auto contentId = sqlite3_column_int(stmt, 2);
@@ -54,20 +63,21 @@ QVector<RecordPtr> RecordsMaster::get(const QString &tag, int limit, int offset)
             break;
         }
     } // for(;;) {
-
     return result;
 }
 
 //------------------------------------------------------------------------------
-void RecordsMaster::addRecord(const RecordPtr &record)
+void RecordMaster::addRecord(const RecordPtr &record)
 {
     Q_ASSERT(record->content());
     Q_ASSERT(record->content()->rowid() > 0);
 
     sqlite3_stmt *stmt;
-    sqlite3_prepare_v2(StorageI.db(),
-                       "INSERT INTO `Records` (`id`, `type`, `contentId`, `date`) "
-                       "VALUES (?1, ?2, ?3, ?4);", -1, &stmt, NULL);
+    defer(sqlite3_finalize(stmt));
+
+    const char *query = "INSERT INTO `Records` (`id`, `type`, `contentId`, `date`) "
+                        "VALUES (?1, ?2, ?3, ?4)";
+    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
 
     // TODO На момент отладки принимаются человеческое представление UUID. Потом раскоментировать
     // sqlite3_bind_blob(stmt, 1, &record->id(), sizeof(QUuid), SQLITE_STATIC);
@@ -81,36 +91,34 @@ void RecordsMaster::addRecord(const RecordPtr &record)
     if (rc != SQLITE_DONE) {
         printf("ERROR inserting data: %s\n", sqlite3_errmsg(StorageI.db()));
         return;
-    } else {
-        qDebug() << "record inserted";
     }
 
-    sqlite3_finalize(stmt);
+    emit recordCreated(record);
 }
 
 //------------------------------------------------------------------------------
-void RecordsMaster::remove(const RecordPtr &record)
+void RecordMaster::remove(const RecordPtr &record)
 {
 }
 
 //------------------------------------------------------------------------------
-void RecordsMaster::remove(const QVector<RecordPtr> &records)
-{
-
-}
-
-//------------------------------------------------------------------------------
-void RecordsMaster::remove(const QVector<QUuid> &records)
+void RecordMaster::remove(const QVector<RecordPtr> &records)
 {
 
 }
 
 //------------------------------------------------------------------------------
-RecordContentPtr RecordsMaster::loadContent(Record::Type type, int rowid)
+void RecordMaster::remove(const QVector<QUuid> &records)
+{
+
+}
+
+//------------------------------------------------------------------------------
+RecordContentPtr RecordMaster::loadContent(Record::Type type, int rowid)
 {
     switch(type) {
         case Record::TextType: {
-            return TextNoteMaster::load(rowid);
+            return TextNoteMasterI.get(rowid);
         }
     }
 

@@ -2,7 +2,7 @@ import QtQuick 2.14
 import QtQuick.Window 2.14
 import Components 1.0
 import Editor 1.0
-import RecordsList 1.0
+import RecordList 1.0
 
 Window {
     title: qsTr("Chaos Hub")
@@ -10,7 +10,7 @@ Window {
     width: 640
     height: 480
 
-    RecordsList {
+    RecordList {
         id: recordsList
 
         anchors {

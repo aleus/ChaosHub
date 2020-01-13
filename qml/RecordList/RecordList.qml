@@ -1,6 +1,6 @@
 import QtQuick 2.14
 import Components 1.0
-import Sp 1.0 as Sp
+import Sp 1.0
 
 /*******************************************************************************
  * Список записей по заданному тегу.
@@ -8,10 +8,10 @@ import Sp 1.0 as Sp
 Item {
     id: _recordsList
 
-    property alias tag: recordsModel.tag
+    property alias tag: recordModel.tag
 
-    Sp.RecordsModel {
-        id: recordsModel
+    RecordModel {
+        id: recordModel
 
         tag: "root" // Debug!!! Временный флаг
     }
@@ -20,7 +20,7 @@ Item {
         id: listView
 
         delegate: TextNote {}
-        model: recordsModel
+        model: recordModel
         anchors {
             top: parent.top
             left: parent.left

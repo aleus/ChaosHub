@@ -4,10 +4,10 @@
         <file>Components/qmldir</file>
         <file>Components/Consts.qml</file>
         <file>Components/DebugRectangle.qml</file>
-        <file>RecordsList/RecordsList.qml</file>
-        <file>RecordsList/qmldir</file>
+        <file>RecordList/RecordList.qml</file>
+        <file>RecordList/qmldir</file>
         <file>Editor/Editor.qml</file>
         <file>Editor/qmldir</file>
-        <file>RecordsList/TextNote.qml</file>
+        <file>RecordList/TextNote.qml</file>
     </qresource>
 </RCC>

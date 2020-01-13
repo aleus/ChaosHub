@@ -9,7 +9,7 @@ struct sqlite3;
 namespace sp {
 
 /** Быстрое обращение к синглетону. */
-#define StorageI sp::Storage::instance()
+#define StorageI Storage::instance()
 
 /***********************************************************************//**
  * @brief Синглетон для доступа к хранилищу с данными хаба.
