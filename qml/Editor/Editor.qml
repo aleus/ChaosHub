@@ -20,6 +20,8 @@ Item {
             left: parent.left
             right: sendButton.left
             margins: Consts.spacing
+            leftMargin: Consts.margin
+            rightMargin: Consts.margin
             verticalCenter: parent.verticalCenter
         }
 

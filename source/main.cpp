@@ -1,16 +1,18 @@
 /// @author M. A. Serebrennikov
 
 #include "Record.h"
+#include "RecordHelper.h"
 #include "RecordMaster.h"
 #include "RecordModel.h"
 #include "Storage.h"
-#include "TextNoteMaster.h"
 #include "TextNote.h"
+#include "TextNoteMaster.h"
 #include "Tools.h"
 
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QQuickWindow>
 
 int main(int argc, char *argv[])
 {
@@ -25,6 +27,9 @@ int main(int argc, char *argv[])
     engine.addImportPath("qrc:///"); // Позволяет импортировать QML в формате import Components 1.0
     auto context = engine.rootContext();
 
+    // Тюнинг шрифтов
+    QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
+
     // Регистрация классов в QML
     qRegisterMetaType<Record *>("Record *");
     qRegisterMetaType<RecordContent *>("RecordContent *");
@@ -32,6 +37,7 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<RecordModel>("Sp", 1, 0, "RecordModel");
     qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
+    qmlRegisterSingletonInstance("Sp", 1, 0, "RecordHelper", &RecordHelperI);
 
     // Регистрация переменных в QML
     context->setContextProperty("RecordMaster", &RecordMasterI);

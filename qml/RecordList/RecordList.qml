@@ -10,6 +10,8 @@ Item {
 
     property alias tag: recordModel.tag
 
+    clip: true
+
     RecordModel {
         id: recordModel
 
@@ -21,6 +23,9 @@ Item {
 
         delegate: TextNote {}
         model: recordModel
+        verticalLayoutDirection: ListView.BottomToTop
+        boundsBehavior: ListView.StopAtBounds
+        spacing: Consts.spacing
         anchors {
             top: parent.top
             left: parent.left

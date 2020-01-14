@@ -9,9 +9,11 @@ Project {
     Application {
         files: [
             "README.md",
+            "include/Defer.h",
             "include/PointersTypedef.h",
             "include/Record.h",
             "include/RecordContent.h",
+            "include/RecordHelper.h",
             "include/RecordMaster.h",
             "include/RecordModel.h",
             "include/Storage.h",
@@ -20,6 +22,7 @@ Project {
             "include/Tools.h",
             "source/Record.cpp",
             "source/RecordContent.cpp",
+            "source/RecordHelper.cpp",
             "source/RecordMaster.cpp",
             "source/RecordModel.cpp",
             "source/Storage.cpp",
