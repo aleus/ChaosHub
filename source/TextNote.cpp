@@ -24,7 +24,9 @@ TextNote::TextNote(int rowid, const QString &text)
 QString TextNote::textRendered() const
 {
     QString result(_text);
-    QRegExp rx("\\b((?:https?:\\/\\/|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{1,4}|localhost\\/?)(?:[^\\s()<>]+|\\((?:[^\\s()<>]+|(?:\\([^\\s()<>]+\\)))*\\))+)");
+
+    // Ссылка на сайт
+    QRegExp rx("\\b((?:https?:\\/\\/|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{1,4}|localhost\\/?)(?:.?[^\\s()<>.]+|\\((?:[^\\s()<>]+|(?:\\([^\\s()<>]+\\)))*\\))+)");
     for (int pos = 0, shift = 0
          ; (pos = rx.indexIn(_text, pos)) != -1
          ; pos += rx.matchedLength())
@@ -36,6 +38,9 @@ QString TextNote::textRendered() const
         result.insert(shift + pos, prefix);
         shift += suffix.length() + prefix.length();
     }
+
+    // Перевод строки
+    result.replace(QStringLiteral("\n\n"), QStringLiteral("<BR><BR>\n"));
 
     return result;
 }

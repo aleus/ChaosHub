@@ -71,7 +71,7 @@ class Record: public QObject
         /** Возвращает дату создания записи. */
         inline const QDateTime& date() const { return _date; }
 
-        /** Возвращает дату создания записи в виде строки. */
+        /** Возвращает дату создания в виде строки. */
         QString dateStr() const;
 
     private:

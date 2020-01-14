@@ -52,7 +52,7 @@ QVector<RecordPtr> RecordMaster::get(const QString &tag, int limit, int offset)
 
             auto type = static_cast<Record::Type>(sqlite3_column_int(stmt, 1));
             auto contentId = sqlite3_column_int(stmt, 2);
-            auto date = QDateTime::fromTime_t(sqlite3_column_int64(stmt, 3));
+            auto date = QDateTime::fromMSecsSinceEpoch(sqlite3_column_int64(stmt, 3));
 
             RecordPtr record(new Record(id,type,loadContent(type, contentId), date));
             result.append(record);
@@ -85,7 +85,7 @@ void RecordMaster::addRecord(const RecordPtr &record)
     sqlite3_bind_blob(stmt, 1, buf.data(), buf.size(), SQLITE_STATIC);
     sqlite3_bind_int(stmt, 2, record->type());
     sqlite3_bind_int(stmt, 3, record->content()->rowid());
-    sqlite3_bind_int(stmt, 4, record->date().toMSecsSinceEpoch());
+    sqlite3_bind_int64(stmt, 4, record->date().toMSecsSinceEpoch());
 
     int rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {

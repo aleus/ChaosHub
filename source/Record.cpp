@@ -29,5 +29,5 @@ Record::Record(const QUuid &id, Record::Type type, const RecordContentPtr &conte
 //------------------------------------------------------------------------------
 QString Record::dateStr() const
 {
-    return _date.toString();
+    return _date.toString("hh:mm, d MMM yyyy");
 }

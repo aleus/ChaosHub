@@ -9,23 +9,21 @@ import Sp 1.0
 Item {
     id: _textNote
 
+    width: Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin
+    height: textItem.contentHeight + 2*textItem.anchors.topMargin + Consts.margin
     anchors {
         left: parent.left
         leftMargin: Consts.margin
     }
 
-    // width: Math.min(parent.width - 2*anchors.leftMargin
-    //                 , textItem.contentWidth + 2*textItem.anchors.leftMargin)
-    width: textItem.contentWidth + 2*textItem.anchors.leftMargin
-    height: textItem.contentHeight + 2*textItem.anchors.topMargin
-
     Rectangle {
-        color: "#cfcfcf"
+        color: Consts.colorNoteBackground
         anchors.fill: parent
         radius: Consts.radius
     }
 
-    Text {
+    //--------------------------------------------------------------------
+    TextEdit {
         id: textItem
 
         text: record.content.textRendered
@@ -33,14 +31,15 @@ Item {
         textFormat: Text.RichText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
         width: _textNote.parent.width - 4*_textNote.anchors.leftMargin
+        selectByMouse: true
+        readOnly: true
+        color: Consts.colorText
 
         anchors {
             top: parent.top
             left: parent.left
-            //right: parent.right
             topMargin: Consts.margin
             leftMargin: Consts.margin
-            // rightMargin: Consts.margin
         }
 
         MouseArea {
@@ -49,18 +48,26 @@ Item {
                          ? Qt.PointingHandCursor
                          : Qt.ArrowCursor
             acceptedButtons: Qt.NoButton
-        }
-
-        onTextChanged: {
-            const rx = /\b((?:https?:\/\/|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{1,4}|localhost\/?)(?:[^\s()<>]+|\((?:[^\s()<>]+|(?:\([^\s()<>]+\)))*\))+)/gmi;
-            if (rx.test(record.content.text)) {
-                console.log("Yes it is link: " + record.content.textRendered);
-            }
+            visible: textItem.hoveredLink
         }
 
         onLinkActivated: {
-            console.log("link: " + link);
             Qt.openUrlExternally(RecordHelper.formatUrl(link));
         }
     } // Text { id: textItem
+
+    //--------------------------------------------------------------------
+    Text {
+        id: dateItem
+
+        text: record.dateStr
+        font.pixelSize: Consts.fontSmall
+        color: Consts.colorTextSecond
+        anchors {
+            right: parent.right
+            bottom: parent.bottom
+            rightMargin: Consts.margin
+            bottomMargin: Consts.spacing
+        }
+    }
 }

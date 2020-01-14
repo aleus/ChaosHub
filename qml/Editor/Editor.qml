@@ -52,7 +52,7 @@ Item {
         }
 
         Rectangle {
-            color: Consts.colorGray
+            color: Consts.colorGray0
             anchors.fill: parent
         }
 
