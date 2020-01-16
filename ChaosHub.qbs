@@ -9,6 +9,8 @@ Project {
     Application {
         files: [
             "README.md",
+            "fonts/fonts.qrc",
+            "include/Colors.h",
             "include/Defer.h",
             "include/PointersTypedef.h",
             "include/Record.h",
@@ -20,6 +22,7 @@ Project {
             "include/TextNote.h",
             "include/TextNoteMaster.h",
             "include/Tools.h",
+            "source/Colors.cpp",
             "source/Record.cpp",
             "source/RecordContent.cpp",
             "source/RecordHelper.cpp",

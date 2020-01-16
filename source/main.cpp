@@ -1,5 +1,6 @@
 /// @author M. A. Serebrennikov
 
+#include "Colors.h"
 #include "Record.h"
 #include "RecordHelper.h"
 #include "RecordMaster.h"
@@ -9,6 +10,7 @@
 #include "TextNoteMaster.h"
 #include "Tools.h"
 
+#include <QFontDatabase>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -29,15 +31,31 @@ int main(int argc, char *argv[])
 
     // Тюнинг шрифтов
     QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Black.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-BlackItalic.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Bold.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-BoldItalic.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Italic.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Light.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-LightItalic.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-MediumItalic.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Regular.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-Thin.ttf");
+    QFontDatabase::addApplicationFont(":/fonts/Roboto-ThinItalic.ttf");
+
+    app.setFont(QFont("Roboto"));
 
     // Регистрация классов в QML
     qRegisterMetaType<Record *>("Record *");
     qRegisterMetaType<RecordContent *>("RecordContent *");
     qRegisterMetaType<TextNote *>("TextNote *");
-
     qmlRegisterType<RecordModel>("Sp", 1, 0, "RecordModel");
+
+    // Синглетоны
     qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
     qmlRegisterSingletonInstance("Sp", 1, 0, "RecordHelper", &RecordHelperI);
+    qmlRegisterSingletonInstance("Sp", 1, 0, "Colors", &ColorsI);
 
     // Регистрация переменных в QML
     context->setContextProperty("RecordMaster", &RecordMasterI);

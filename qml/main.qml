@@ -18,7 +18,6 @@ Window {
             left: parent.left
             right: parent.right
             bottom: editor.top
-            bottomMargin: Consts.spacing
         }
     }
 

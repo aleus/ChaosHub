@@ -1,4 +1,5 @@
 /// @author M. A. Serebrennikov
+#include "Colors.h"
 #include "Record.h"
 #include "TextNote.h"
 
@@ -32,7 +33,9 @@ QString TextNote::textRendered() const
          ; pos += rx.matchedLength())
     {
         static QString suffix("</a>");
-        QString prefix = "<a href='" % rx.cap(0) %"' style='text-decoration: none'>";
+        QString prefix = "<a href='" % rx.cap(0) % "' style='"
+                          "text-decoration: none; "
+                          "color: " % ColorsI.link().name() % "'>";
 
         result.insert(shift + pos + rx.matchedLength(), suffix);
         result.insert(shift + pos, prefix);

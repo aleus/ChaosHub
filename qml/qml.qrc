@@ -9,5 +9,6 @@
         <file>Editor/Editor.qml</file>
         <file>Editor/qmldir</file>
         <file>RecordList/TextNote.qml</file>
+        <file>Editor/SendButton.qml</file>
     </qresource>
 </RCC>

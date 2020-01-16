@@ -17,7 +17,7 @@ Item {
     }
 
     Rectangle {
-        color: Consts.colorNoteBackground
+        color: Colors.noteBackground
         anchors.fill: parent
         radius: Consts.radius
     }
@@ -30,11 +30,12 @@ Item {
         font.pixelSize: Consts.fontNormal
         textFormat: Text.RichText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        width: _textNote.parent.width - 4*_textNote.anchors.leftMargin
         selectByMouse: true
         readOnly: true
-        color: Consts.colorText
+        color: Colors.text
+        selectionColor: Colors.selection
 
+        width: _textNote.parent.width - 4*_textNote.anchors.leftMargin
         anchors {
             top: parent.top
             left: parent.left
@@ -62,7 +63,7 @@ Item {
 
         text: record.dateStr
         font.pixelSize: Consts.fontSmall
-        color: Consts.colorTextSecond
+        color: Colors.textSecond
         anchors {
             right: parent.right
             bottom: parent.bottom

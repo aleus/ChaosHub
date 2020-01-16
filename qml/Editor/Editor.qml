@@ -10,12 +10,19 @@ Item {
 
     height: Math.max(textEdit.height, sendButton.height) + 2*Consts.spacing
 
+    Rectangle {
+        color: Colors.editorBackground
+        anchors.fill: parent
+    }
+
     TextEdit {
         id: textEdit
 
         focus: true
         padding: Consts.spacing
         font.pixelSize: Consts.fontNormal
+        color: Colors.text
+        selectionColor: Colors.selection
         anchors {
             left: parent.left
             right: sendButton.left
@@ -25,7 +32,19 @@ Item {
             verticalCenter: parent.verticalCenter
         }
 
-        DebugRectangle {}
+        Text {
+            id: placeholder
+
+            text: qsTr("Write a note...")
+            font: parent.font
+            visible: parent.text == ""
+            color: Colors.text
+            anchors {
+                top: parent.top
+                left: parent.left
+                margins: Consts.spacing
+            }
+        }
 
         Keys.onPressed: {
             switch (event.key) {
@@ -40,24 +59,12 @@ Item {
         } // Keys.onPressed: {
     } // TextEdit { id: textEdit
 
-    MouseArea {
+    SendButton {
         id: sendButton
-
-        width: Consts.buttonHeight
-        height: width
         anchors {
             right: parent.right
             bottom: parent.bottom
             margins: Consts.spacing
-        }
-
-        Rectangle {
-            color: Consts.colorGray0
-            anchors.fill: parent
-        }
-
-        onClicked: {
-            _editor.addTextNote();
         }
     } // MouseArea { id: sendButton
 

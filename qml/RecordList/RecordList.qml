@@ -12,6 +12,13 @@ Item {
 
     clip: true
 
+    Rectangle {
+        id: background
+
+        color: Colors.background
+        anchors.fill: parent
+    }
+
     RecordModel {
         id: recordModel
 
@@ -26,6 +33,7 @@ Item {
         verticalLayoutDirection: ListView.BottomToTop
         boundsBehavior: ListView.StopAtBounds
         spacing: Consts.spacing
+        bottomMargin: Consts.spacing
         anchors {
             top: parent.top
             left: parent.left
