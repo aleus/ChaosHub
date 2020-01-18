@@ -30,7 +30,7 @@ void TextNoteMaster::create(const QString &text)
 
     const char *query = "INSERT INTO `TextNotes` (`text`) VALUES (?1)";
     sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, nullptr);
-    QByteArray buf = text.toUtf8();
+    QByteArray buf = text.trimmed().toUtf8();
     sqlite3_bind_text(stmt, 1, buf.data(), buf.size(), SQLITE_STATIC);
 
     int rc = sqlite3_step(stmt);
@@ -39,7 +39,7 @@ void TextNoteMaster::create(const QString &text)
         return;
     } else {
         // Создаём запись для текстовой заметки.
-        auto *textNote = new RecordContentPtr(new TextNote(text));
+        auto *textNote = new RecordContentPtr(new TextNote(text.trimmed()));
         RecordPtr record(new Record(Record::TextType, *textNote));
 
         int rowid = sqlite3_last_insert_rowid(StorageI.db());

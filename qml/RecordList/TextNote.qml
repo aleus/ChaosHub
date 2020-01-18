@@ -1,3 +1,4 @@
+/// @author M. A. Serebrennikov
 import QtQuick 2.14
 import Components 1.0
 import Sp 1.0
@@ -9,11 +10,13 @@ import Sp 1.0
 Item {
     id: _textNote
 
-    width: Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin
+    width: textItem.lineCount <= 1
+           ? Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin
+           : parent.width - 2*anchors.margins
     height: textItem.contentHeight + 2*textItem.anchors.topMargin + Consts.margin
     anchors {
         left: parent.left
-        leftMargin: Consts.margin
+        margins: Consts.margin
     }
 
     Rectangle {
@@ -23,19 +26,21 @@ Item {
     }
 
     //--------------------------------------------------------------------
-    TextEdit {
+    TextEditSp {
         id: textItem
 
-        text: record.content.textRendered
+        text: record.content.text
         font.pixelSize: Consts.fontNormal
         textFormat: Text.RichText
         wrapMode: Text.WrapAtWordBoundaryOrAnywhere
-        selectByMouse: true
-        readOnly: true
         color: Colors.text
         selectionColor: Colors.selection
+        selectByMouse: true
+        readOnly: true
+        linkColor: Colors.link
+        lineHeight: 1.1
 
-        width: _textNote.parent.width - 4*_textNote.anchors.leftMargin
+        width: _textNote.parent.width - 4*_textNote.anchors.margins
         anchors {
             top: parent.top
             left: parent.left
@@ -53,7 +58,7 @@ Item {
         }
 
         onLinkActivated: {
-            Qt.openUrlExternally(RecordHelper.formatUrl(link));
+            Qt.openUrlExternally(link);
         }
     } // Text { id: textItem
 

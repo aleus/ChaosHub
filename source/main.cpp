@@ -2,10 +2,10 @@
 
 #include "Colors.h"
 #include "Record.h"
-#include "RecordHelper.h"
 #include "RecordMaster.h"
 #include "RecordModel.h"
 #include "Storage.h"
+#include "TextEditHelper.h"
 #include "TextNote.h"
 #include "TextNoteMaster.h"
 #include "Tools.h"
@@ -50,11 +50,12 @@ int main(int argc, char *argv[])
     qRegisterMetaType<Record *>("Record *");
     qRegisterMetaType<RecordContent *>("RecordContent *");
     qRegisterMetaType<TextNote *>("TextNote *");
+
     qmlRegisterType<RecordModel>("Sp", 1, 0, "RecordModel");
+    qmlRegisterType<TextEditHelper>("Sp", 1, 0, "TextEditHelper");
 
     // Синглетоны
     qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
-    qmlRegisterSingletonInstance("Sp", 1, 0, "RecordHelper", &RecordHelperI);
     qmlRegisterSingletonInstance("Sp", 1, 0, "Colors", &ColorsI);
 
     // Регистрация переменных в QML

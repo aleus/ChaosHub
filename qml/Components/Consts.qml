@@ -1,3 +1,4 @@
+/// @author M. A. Serebrennikov
 pragma Singleton
 
 import QtQuick 2.14

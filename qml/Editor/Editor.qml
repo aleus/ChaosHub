@@ -1,3 +1,4 @@
+/// @author M. A. Serebrennikov
 import QtQuick 2.14
 import Components 1.0
 import Sp 1.0
@@ -72,5 +73,6 @@ Item {
     function addTextNote() {
         console.log("addTextNote");
         TextNoteMaster.create(textEdit.text);
+        textEdit.text = "";
     }
 }

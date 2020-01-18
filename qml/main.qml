@@ -1,3 +1,4 @@
+/// @author M. A. Serebrennikov
 import QtQuick 2.14
 import QtQuick.Window 2.14
 import Components 1.0

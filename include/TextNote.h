@@ -6,6 +6,8 @@
 
 #include <QString>
 
+class QQuickTextDocument;
+
 namespace sp {
 
 /***************************************************************************//**
@@ -16,7 +18,6 @@ class TextNote: public RecordContent
     Q_OBJECT
 
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
-    Q_PROPERTY(QString textRendered READ textRendered NOTIFY textChanged)
 
     public:
         // TODO Возможно, нужно убрать в private
@@ -24,10 +25,8 @@ class TextNote: public RecordContent
         TextNote(int rowid, const QString &text);
 
         /** Возвращает текст заметки. */
-        inline const QString& text() const { return _text; }
-
-        /** Возвращает текст заметки со вставленными тегами отображения. */
-        QString textRendered() const;
+        // inline const QString& text() const { return _text.trimmed(); }
+        inline QString text() const { return _text.trimmed(); }
 
         /** Устанавливает текст заметки. */
         void setText(QString text);

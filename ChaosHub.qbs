@@ -3,7 +3,8 @@ import qbs
 Project {
     references: [
         "libs/sqlite/sqlite.qbs",
-        "libs/botan/botan.qbs",
+        // Botan временно отключен до реализации шифрования
+        // "libs/botan/botan.qbs",
     ]
 
     Application {
@@ -15,20 +16,20 @@ Project {
             "include/PointersTypedef.h",
             "include/Record.h",
             "include/RecordContent.h",
-            "include/RecordHelper.h",
             "include/RecordMaster.h",
             "include/RecordModel.h",
             "include/Storage.h",
+            "include/TextEditHelper.h",
             "include/TextNote.h",
             "include/TextNoteMaster.h",
             "include/Tools.h",
             "source/Colors.cpp",
             "source/Record.cpp",
             "source/RecordContent.cpp",
-            "source/RecordHelper.cpp",
             "source/RecordMaster.cpp",
             "source/RecordModel.cpp",
             "source/Storage.cpp",
+            "source/TextEditHelper.cpp",
             "source/TextNote.cpp",
             "source/TextNoteMaster.cpp",
             "source/Tools.cpp",
@@ -46,7 +47,7 @@ Project {
 
         Depends { name: "Qt"; submodules: ["core", "quick", "widgets"] }
         Depends { name: "sqlite" }
-        Depends { name: "botan" }
+        // Depends { name: "botan" }
 
         Group {
             fileTagsFilter: "application"
