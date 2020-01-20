@@ -14,7 +14,10 @@ RecordModel::RecordModel(QObject *parent)
            ,this, &RecordModel::lazyLoad, Qt::QueuedConnection);
 
     connect(&RecordMasterI, &RecordMaster::recordCreated
-           ,this, &RecordModel::onRecordCreated, Qt::QueuedConnection);
+           ,this,           &RecordModel::onRecordCreated, Qt::QueuedConnection);
+
+    connect(&RecordMasterI, &RecordMaster::recordRemoved
+           ,this,           &RecordModel::onRecordRemoved, Qt::QueuedConnection);
 }
 
 //------------------------------------------------------------------------------
@@ -127,4 +130,13 @@ void RecordModel::onRecordCreated(RecordPtr record)
     emit beginInsertRows(QModelIndex(), 0, 0);
     _records.insert(0, record);
     emit endInsertRows();
+}
+
+//------------------------------------------------------------------------------
+void RecordModel::onRecordRemoved(RecordPtr record)
+{
+    int pos = _records.indexOf(record);
+    emit beginRemoveRows(QModelIndex(), pos, pos);
+    _records.remove(pos);
+    emit endRemoveRows();
 }

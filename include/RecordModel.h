@@ -76,6 +76,9 @@ class RecordModel: public QAbstractListModel
         /** При создании новой записи, показываем его, если нужно. */
         void onRecordCreated(RecordPtr record);
 
+        /** После удаления записи, убираем её из модели. */
+        void onRecordRemoved(RecordPtr record);
+
     signals:
         void tagChanged() const;
         void loadLimitChanged() const;

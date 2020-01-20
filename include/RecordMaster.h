@@ -37,12 +37,15 @@ class RecordMaster: public QObject
         // Special
         //--------------------------------------------------------------------
         /** Добавляет запись в хранилище. */
-        void addRecord(const RecordPtr &record);
+        void append(const RecordPtr &record);
 
         /** Удаляет запись из хранилища и приложения. */
-        void remove(const RecordPtr &record);
-        void remove(const QVector<RecordPtr> &records);
-        void remove(const QVector<QUuid> &records);
+        void removeRaw(const RecordPtr &record);
+        void removeRaw(const QVector<RecordPtr> &records);
+        void removeRaw(const QVector<QUuid> &records);
+
+        /** Удаляет запись из хранилища. Используется в QML. */
+        Q_INVOKABLE void removeRaw(Record *recordRaw);
 
     private:
         RecordContentPtr loadContent(Record::Type type, int rowid);

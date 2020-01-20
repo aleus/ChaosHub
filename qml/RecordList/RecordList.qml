@@ -7,7 +7,7 @@ import Sp 1.0
  * Список записей по заданному тегу.
  ******************************************************************************/
 Item {
-    id: _recordsList
+    id: _recordList
 
     property alias tag: recordModel.tag
 
@@ -40,6 +40,19 @@ Item {
             left: parent.left
             right: parent.right
             bottom: parent.bottom
+        }
+    }
+
+    // TODO Добавить таймер на удаление и восстановление
+
+    ContextMenu {
+        id: contextMenu
+
+        MenuButton {
+            text: qsTr("Delete record")
+            onClicked: {
+                RecordMaster.removeRaw(contextMenu.contextObject);
+            }
         }
     }
 }

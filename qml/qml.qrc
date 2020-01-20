@@ -11,5 +11,9 @@
         <file>RecordList/TextNote.qml</file>
         <file>Editor/SendButton.qml</file>
         <file>Components/TextEditSp.qml</file>
+        <file>Components/ContextMenu.qml</file>
+        <file>Components/MenuButton.qml</file>
+        <file>TagsList/TagsList.qml</file>
+        <file>TagsList/qmldir</file>
     </qresource>
 </RCC>

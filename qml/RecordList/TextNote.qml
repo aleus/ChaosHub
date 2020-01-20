@@ -50,9 +50,6 @@ Item {
 
         MouseArea {
             anchors.fill: parent
-            cursorShape: textItem.hoveredLink
-                         ? Qt.PointingHandCursor
-                         : Qt.ArrowCursor
             acceptedButtons: Qt.NoButton
             visible: textItem.hoveredLink
         }
@@ -74,6 +71,26 @@ Item {
             bottom: parent.bottom
             rightMargin: Consts.margin
             bottomMargin: Consts.spacing
+        }
+    }
+
+    //--------------------------------------------------------------------
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: textItem.hoveredLink
+                     ? Qt.PointingHandCursor
+                     : Qt.ArrowCursor
+        acceptedButtons: Qt.RightButton
+        onClicked: {
+            if (textItem.hoveredLink) {
+                mouse.accepted = false;
+                return;
+            }
+
+            if (mouse.button == Qt.RightButton) {
+                var point = mapToGlobal(mouse.x, mouse.y);
+                contextMenu.open(point.x, point.y, record);
+            }
         }
     }
 }

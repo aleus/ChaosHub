@@ -20,8 +20,6 @@ TextNoteMaster &TextNoteMaster::instance()
 //------------------------------------------------------------------------------
 void TextNoteMaster::create(const QString &text)
 {
-    qDebug() << "createRecord";
-
     // TODO Вставить транзакцию
 
     // Записываем в БД новую запись
@@ -46,8 +44,7 @@ void TextNoteMaster::create(const QString &text)
         (*textNote)->setRowid(rowid);
         _notes.insert(rowid, textNote);
 
-        qDebug() << "Text note created";
-        RecordMasterI.addRecord(record);
+        RecordMasterI.append(record);
     }
 }
 

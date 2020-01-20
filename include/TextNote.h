@@ -25,11 +25,15 @@ class TextNote: public RecordContent
         TextNote(int rowid, const QString &text);
 
         /** Возвращает текст заметки. */
-        // inline const QString& text() const { return _text.trimmed(); }
         inline QString text() const { return _text.trimmed(); }
 
         /** Устанавливает текст заметки. */
         void setText(QString text);
+
+        //--------------------------------------------------------------------
+        // Override
+        //--------------------------------------------------------------------
+        bool remove() override;
 
     signals:
         void textChanged();

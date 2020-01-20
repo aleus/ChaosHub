@@ -20,7 +20,7 @@ namespace sp {
  *
  * @sa RecordsModel, Storage
  ****************************************************************************/
-class Record: public QObject
+class Record: public QObject, public QEnableSharedFromThis<Record>
 {
     Q_OBJECT
 

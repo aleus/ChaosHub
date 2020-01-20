@@ -14,7 +14,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-#include <QQuickWindow>
 
 int main(int argc, char *argv[])
 {
@@ -24,13 +23,14 @@ int main(int argc, char *argv[])
     qputenv("QML_DISABLE_DISK_CACHE", "1");
 
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     engine.addImportPath("qrc:///"); // Позволяет импортировать QML в формате import Components 1.0
     auto context = engine.rootContext();
 
     // Тюнинг шрифтов
-    QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
+    // QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
     QFontDatabase::addApplicationFont(":/fonts/Roboto-Black.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Roboto-BlackItalic.ttf");
     QFontDatabase::addApplicationFont(":/fonts/Roboto-Bold.ttf");

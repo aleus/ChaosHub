@@ -9,8 +9,8 @@ import Sp 1.0
 MouseArea {
     id: sendButton
     
-    width: Consts.buttonHeight
-    height: width
+    height: Consts.buttonHeight
+    width: height
     
     Rectangle {
         color: Colors.gray1

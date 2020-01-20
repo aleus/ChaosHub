@@ -34,6 +34,9 @@ class Colors: public QObject
     Q_PROPERTY(QColor noteBackground READ noteBackground NOTIFY changed)
     Q_PROPERTY(QColor selection READ selection NOTIFY changed)
     Q_PROPERTY(QColor link READ link NOTIFY changed)
+    Q_PROPERTY(QColor popupBackground READ popupBackground NOTIFY changed)
+    Q_PROPERTY(QColor fade READ fade NOTIFY changed)
+    Q_PROPERTY(QColor highlight READ highlight NOTIFY changed)
 
     public:
         static Colors& instance();
@@ -55,6 +58,9 @@ class Colors: public QObject
         inline const QColor& noteBackground() const { return _noteBackground; }
         inline const QColor& selection() const { return _selection; }
         inline const QColor& link() const { return _link; }
+        inline const QColor& popupBackground() const { return _popupBackground; }
+        inline const QColor& fade() const { return _fade; }
+        inline const QColor& highlight() const { return _highlight; }
 
     signals:
         void changed();
@@ -72,6 +78,7 @@ class Colors: public QObject
         QColor _blue0  = "#89A3FF";
         QColor _blue1  = "#2357A4";
         QColor _white = "white";
+        QColor _fade = {0,0,0,120};
 
         QColor _text  = "white";
         QColor _textSecond = _gray2;
@@ -80,6 +87,8 @@ class Colors: public QObject
         QColor _noteBackground = _gray1;
         QColor _selection = _blue1;
         QColor _link = _blue0;
+        QColor _popupBackground = _gray0;
+        QColor _highlight = _blue1;
 };
 
 } // namespace sp

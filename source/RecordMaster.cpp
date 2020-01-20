@@ -67,7 +67,7 @@ QVector<RecordPtr> RecordMaster::get(const QString &tag, int limit, int offset)
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::addRecord(const RecordPtr &record)
+void RecordMaster::append(const RecordPtr &record)
 {
     Q_ASSERT(record->content());
     Q_ASSERT(record->content()->rowid() > 0);
@@ -97,20 +97,56 @@ void RecordMaster::addRecord(const RecordPtr &record)
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::remove(const RecordPtr &record)
+void RecordMaster::removeRaw(const RecordPtr &record)
 {
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::remove(const QVector<RecordPtr> &records)
+void RecordMaster::removeRaw(const QVector<RecordPtr> &records)
 {
 
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::remove(const QVector<QUuid> &records)
+void RecordMaster::removeRaw(const QVector<QUuid> &records)
 {
 
+}
+
+//------------------------------------------------------------------------------
+void RecordMaster::removeRaw(Record *recordRaw)
+{
+    if (!recordRaw) {
+        Q_ASSERT(false);
+        return;
+    }
+    auto record = recordRaw->sharedFromThis();
+
+    if (!record->content()->remove()) {
+        return;
+    }
+
+    Q_ASSERT(record->content());
+    Q_ASSERT(record->content()->rowid() > 0);
+
+    sqlite3_stmt *stmt;
+    defer(sqlite3_finalize(stmt));
+
+    const char *query = "DELETE FROM `Records` WHERE `id`=?1";
+    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
+
+    // TODO На момент отладки принимаются человеческое представление UUID. Потом раскоментировать
+    // sqlite3_bind_blob(stmt, 1, &record->id(), sizeof(QUuid), SQLITE_STATIC);
+    QByteArray buf = record->id().toByteArray();
+    sqlite3_bind_blob(stmt, 1, buf.data(), buf.size(), SQLITE_STATIC);
+
+    int rc = sqlite3_step(stmt);
+    if (rc != SQLITE_DONE) {
+        qCritical("Error of removing record: %s\n", sqlite3_errmsg(StorageI.db()));
+        return;
+    }
+
+    emit recordRemoved(record);
 }
 
 //------------------------------------------------------------------------------
