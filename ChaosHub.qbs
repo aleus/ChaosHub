@@ -11,6 +11,7 @@ Project {
         files: [
             "README.md",
             "fonts/fonts.qrc",
+            "include/Clipboard.h",
             "include/Colors.h",
             "include/Defer.h",
             "include/PointersTypedef.h",
@@ -23,6 +24,7 @@ Project {
             "include/TextNote.h",
             "include/TextNoteMaster.h",
             "include/Tools.h",
+            "source/Clipboard.cpp",
             "source/Colors.cpp",
             "source/Record.cpp",
             "source/RecordContent.cpp",

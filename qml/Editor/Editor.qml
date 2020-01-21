@@ -71,7 +71,6 @@ Item {
 
     //--------------------------------------------------------------------
     function addTextNote() {
-        console.log("addTextNote");
         TextNoteMaster.create(textEdit.text);
         textEdit.text = "";
     }

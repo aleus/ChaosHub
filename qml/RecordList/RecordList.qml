@@ -44,15 +44,43 @@ Item {
     }
 
     // TODO Добавить таймер на удаление и восстановление
-
+    //--------------------------------------------------------------------
     ContextMenu {
         id: contextMenu
 
         MenuButton {
-            text: qsTr("Delete record")
+            text: qsTr("Copy text")
+            visible: contextMenu.contextObject != null
+                     && contextMenu.contextObject.selectedText === ""
             onClicked: {
-                RecordMaster.removeRaw(contextMenu.contextObject);
+                Clipboard.text = contextMenu.contextObject.record.content.text;
             }
         }
-    }
+
+        MenuButton {
+            text: qsTr("Copy selected text")
+            visible: contextMenu.contextObject != null
+                     && contextMenu.contextObject.selectedText !== ""
+            onClicked: {
+                Clipboard.text = contextMenu.contextObject.selectedText;
+            }
+        }
+
+        MenuButton {
+            text: qsTr("Copy link")
+            visible: contextMenu.contextObject != null
+                     && contextMenu.contextObject.hoveredLink !== ""
+            onClicked: {
+                Clipboard.text = contextMenu.contextObject.hoveredLink;
+            }
+        }
+
+        MenuButton {
+            text: qsTr("Delete record")
+            onClicked: {
+                var record = contextMenu.contextObject.record;
+                RecordMaster.removeRaw(record);
+            }
+        }
+    } // ContextMenu { id: contextMenu
 }

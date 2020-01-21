@@ -10,6 +10,9 @@ import Sp 1.0
 Item {
     id: _textNote
 
+    readonly property alias selectedText: textItem.selectedText
+    readonly property alias hoveredLink: textItem.hoveredLink
+
     width: textItem.lineCount <= 1
            ? Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin
            : parent.width - 2*anchors.margins
@@ -48,12 +51,6 @@ Item {
             leftMargin: Consts.margin
         }
 
-        MouseArea {
-            anchors.fill: parent
-            acceptedButtons: Qt.NoButton
-            visible: textItem.hoveredLink
-        }
-
         onLinkActivated: {
             Qt.openUrlExternally(link);
         }
@@ -82,14 +79,15 @@ Item {
                      : Qt.ArrowCursor
         acceptedButtons: Qt.RightButton
         onClicked: {
-            if (textItem.hoveredLink) {
-                mouse.accepted = false;
-                return;
-            }
-
             if (mouse.button == Qt.RightButton) {
                 var point = mapToGlobal(mouse.x, mouse.y);
-                contextMenu.open(point.x, point.y, record);
+                var object = {
+                    "record": record,
+                    "hoveredLink": textItem.hoveredLink,
+                    "selectedText": textItem.selectedText
+                }
+
+                contextMenu.open(point.x, point.y, object);
             }
         }
     }

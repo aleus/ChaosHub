@@ -1,5 +1,6 @@
 /// @author M. A. Serebrennikov
 
+#include "Clipboard.h"
 #include "Colors.h"
 #include "Record.h"
 #include "RecordMaster.h"
@@ -57,6 +58,7 @@ int main(int argc, char *argv[])
     // Синглетоны
     qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
     qmlRegisterSingletonInstance("Sp", 1, 0, "Colors", &ColorsI);
+    qmlRegisterSingletonInstance("Sp", 1, 0, "Clipboard", &ClipboardI);
 
     // Регистрация переменных в QML
     context->setContextProperty("RecordMaster", &RecordMasterI);
