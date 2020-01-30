@@ -34,11 +34,15 @@ class TextNoteMaster: public QObject
          */
         RecordContentPtr get(int rowid);
 
+        /** Подготавливает хранилище для дальнейшей работы (создаёт таблицы). */
+        void prepareStorage() const;
+
     private:
         TextNoteMaster() = default;
 
     private:
         QCache<int, RecordContentPtr> _notes{1000}; // TODO После добавления класса Settings, вынести в настройки
+        const QString _tableName = "TextNotes";
 };
 
 } // namespace sp

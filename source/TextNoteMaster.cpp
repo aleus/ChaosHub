@@ -7,6 +7,7 @@
 #include "sqlite3.h"
 
 #include <QDebug>
+#include <QStringBuilder>
 
 using namespace sp;
 
@@ -26,8 +27,8 @@ void TextNoteMaster::create(const QString &text)
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 
-    const char *query = "INSERT INTO `TextNotes` (`text`) VALUES (?1)";
-    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, nullptr);
+    QString query = "INSERT INTO `" % _tableName % "` (`text`) VALUES (?1)";
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, nullptr);
     QByteArray buf = text.trimmed().toUtf8();
     sqlite3_bind_text(stmt, 1, buf.data(), buf.size(), SQLITE_STATIC);
 
@@ -57,24 +58,16 @@ RecordContentPtr TextNoteMaster::get(int rowid)
         sqlite3_stmt *stmt;
         defer(sqlite3_finalize(stmt));
 
-        const char *query = "SELECT `text` from `TextNotes` WHERE rowid = ?1";
-        sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
+        QString query = "SELECT `text` from `" % _tableName % "` WHERE rowid = ?1";
+        sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
         sqlite3_bind_int(stmt,1, rowid);
 
         for(;;) {
             int res = sqlite3_step (stmt);
 
             if (res == SQLITE_ROW) {
-                const uchar* textRaw = sqlite3_column_text(stmt, 0);
-                int textsize = sqlite3_column_bytes(stmt, 0);
-                if (textsize <= 0) {
-                    qCritical() << "Error of loading text of textNote, textsize =" << textsize << "rowid =" << rowid;
-                    Q_ASSERT(false);
-                    continue;
-                }
-                QString text(QByteArray(reinterpret_cast<const char*>(textRaw), textsize));
-
-                auto *note = new RecordContentPtr(new TextNote(rowid, text));
+                auto text = Storage::getString(stmt, 0);
+                auto *note = new RecordContentPtr(new TextNote(rowid, *text));
                 _notes.insert(rowid, note);
 
                 return *note;
@@ -88,4 +81,10 @@ RecordContentPtr TextNoteMaster::get(int rowid)
 
         return {};
     }
+}
+
+//------------------------------------------------------------------------------
+void TextNoteMaster::prepareStorage() const
+{
+    StorageI.createTable("CREATE VIRTUAL TABLE IF NOT EXISTS `" % _tableName % "` USING FTS5(`text`)");
 }

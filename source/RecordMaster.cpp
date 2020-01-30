@@ -8,6 +8,7 @@
 #include "TextNoteMaster.h"
 
 #include <QDebug>
+#include <QStringBuilder>
 
 using namespace sp;
 
@@ -25,36 +26,20 @@ QVector<RecordPtr> RecordMaster::get(const QString &tag, int limit, int offset)
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 
-    const char *query = "SELECT `id`, `type`, `contentId`, `date` from `Records` "
-                        "ORDER BY `date` DESC";
-    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
+    QString query = "SELECT `id`, `type`, `contentId`, `date` from `" % _tableName % "` "
+                    "ORDER BY `date` DESC";
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
 
     for(;;) {
         int res = sqlite3_step (stmt);
 
         if (res == SQLITE_ROW) {
-            const void* buf = sqlite3_column_blob(stmt, 0);
-            int bufsize = sqlite3_column_bytes(stmt, 0);
-            QUuid id;
-            switch(bufsize) {
-                case 38: // количество символов в человеческом представлении UUID
-                    id = QUuid(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
-                    break;
-                case sizeof(QUuid):
-                    id = QUuid::fromRfc4122(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
-                    break;
+            auto id        = Storage::getId(stmt, 0);
+            auto type      = Storage::getEnum<Record::Type>(stmt, 1);
+            auto contentId = Storage::getInt(stmt, 2);
+            auto date      = Storage::getDate(stmt, 3);
 
-                default:
-                    qCritical() << "Error of loading id of record, bufsize =" << bufsize;
-                    Q_ASSERT(false);
-                    continue;
-            }
-
-            auto type = static_cast<Record::Type>(sqlite3_column_int(stmt, 1));
-            auto contentId = sqlite3_column_int(stmt, 2);
-            auto date = QDateTime::fromMSecsSinceEpoch(sqlite3_column_int64(stmt, 3));
-
-            RecordPtr record(new Record(id,type,loadContent(type, contentId), date));
+            RecordPtr record(new Record(*id, type, loadContent(type, contentId), date));
             result.append(record);
         } else if (res == SQLITE_DONE) {
             break;
@@ -75,9 +60,9 @@ void RecordMaster::append(const RecordPtr &record)
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 
-    const char *query = "INSERT INTO `Records` (`id`, `type`, `contentId`, `date`) "
+    QString query = "INSERT INTO `" % _tableName % "` (`id`, `type`, `contentId`, `date`) "
                         "VALUES (?1, ?2, ?3, ?4)";
-    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
 
     // TODO На момент отладки принимаются человеческое представление UUID. Потом раскоментировать
     // sqlite3_bind_blob(stmt, 1, &record->id(), sizeof(QUuid), SQLITE_STATIC);
@@ -97,20 +82,36 @@ void RecordMaster::append(const RecordPtr &record)
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::removeRaw(const RecordPtr &record)
+void RecordMaster::remove(const RecordPtr &record)
 {
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::removeRaw(const QVector<RecordPtr> &records)
+void RecordMaster::remove(const QVector<RecordPtr> &records)
 {
 
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::removeRaw(const QVector<QUuid> &records)
+void RecordMaster::remove(const QVector<QUuid> &records)
 {
 
+}
+
+//------------------------------------------------------------------------------
+void RecordMaster::prepareStorage() const
+{
+    QString query =
+            "CREATE TABLE IF NOT EXISTS `" % _tableName % "`("
+                "`id` BLOB NOT NULL PRIMARY KEY"
+                ",`type` INTEGER NOT NULL"
+                ",`contentId` INTEGER NOT NULL"
+                ",`date` INTEGER"
+            ") WITHOUT ROWID;"
+
+            "CREATE INDEX IF NOT EXISTS `index_id` ON `" % _tableName % "`(`id`);"
+            "CREATE INDEX IF NOT EXISTS `index_contentId` ON `" % _tableName % "`(`contentId`);";
+    StorageI.createTable(query);
 }
 
 //------------------------------------------------------------------------------

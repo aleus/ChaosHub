@@ -39,6 +39,7 @@ void TextNote::setText(QString text)
 //------------------------------------------------------------------------------
 bool TextNote::remove()
 {
+    // TODO Перенести в TextNoteMaster
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 

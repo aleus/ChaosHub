@@ -44,13 +44,11 @@ class Record: public QObject, public QEnableSharedFromThis<Record>
          */
         Record(Type type, const RecordContentPtr &content);
 
-        /** Конструктор для загрузки записи. */
+        /** Конструктор для загрузки записи из хранилища. */
         Record(const QUuid &id, Type type, const RecordContentPtr &content, const QDateTime &date);
 
-        /** Копирующего конструктора не должно быть, вся передача через RecordPtr. */
+        // Копирующего и перемещеающего конструктора не должно быть, вся передача через RecordPtr.
         Record(const Record &record) = delete;
-
-        /** Перемещающего конструктора не должно быть, вся передача через RecordPtr. */
         Record(Record &&record) = delete;
 
         //----------------------------------------------------------------------
@@ -65,9 +63,6 @@ class Record: public QObject, public QEnableSharedFromThis<Record>
         /** Возвращает указатель на содержимое записи. */
         inline const RecordContentPtr& content() const { return _content; }
 
-        /** Возвращает голый указатель на содержимое записи. Используется в QML */
-        inline RecordContent* contentRaw() const { return _content.data(); }
-
         /** Возвращает дату создания записи. */
         inline const QDateTime& date() const { return _date; }
 
@@ -75,8 +70,8 @@ class Record: public QObject, public QEnableSharedFromThis<Record>
         QString dateStr() const;
 
     private:
-        /** Загружает данные записи из хранилища. */
-        void load();
+        /** Возвращает голый указатель на содержимое записи. Используется в QML */
+        inline RecordContent* contentRaw() const { return _content.data(); }
 
     private:
         QUuid _id;

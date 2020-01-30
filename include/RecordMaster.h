@@ -13,8 +13,12 @@ namespace sp {
 #define RecordMasterI RecordMaster::instance()
 
 /*************************************************************************//**
- * @brief Синглетон производит загрузку, удаление и изменение объектов
- * класса Record.
+ * @brief Синглетон, работающий с записями Record в Storage.
+ *
+ * @details Класс умеет загружать, добавлять и удалять записи из Storage.
+ * В то же время синглетон не хранит объекты Record. Они по своей сути
+ * являются временным объектами, которые используются в GUI (к примеру
+ * внутри модели RecordModel).
  ****************************************************************************/
 class RecordMaster: public QObject
 {
@@ -27,11 +31,11 @@ class RecordMaster: public QObject
         //--------------------------------------------------------------------
         // Get
         //--------------------------------------------------------------------
-        /**
-         * @brief Возвращает список записей по тегу, загруженных из хранилища.
-         * @details
-         */
+        /** Возвращает список записей по тегу, загруженных из хранилища. */
         QVector<RecordPtr> get(const QString &tag, int limit, int offset = 0);
+
+        /** Возвращает название таблицы, в которой хранятся записи. */
+        inline const QString &tableName() const { return _tableName; }
 
         //--------------------------------------------------------------------
         // Special
@@ -40,22 +44,28 @@ class RecordMaster: public QObject
         void append(const RecordPtr &record);
 
         /** Удаляет запись из хранилища и приложения. */
-        void removeRaw(const RecordPtr &record);
-        void removeRaw(const QVector<RecordPtr> &records);
-        void removeRaw(const QVector<QUuid> &records);
+        void remove(const RecordPtr &record);
+        void remove(const QVector<RecordPtr> &records);
+        void remove(const QVector<QUuid> &records);
+
+        /** Подготавливает хранилище для дальнейшей работы (создаёт таблицы). */
+        void prepareStorage() const;
+
+    private:
+        RecordMaster() = default;
+
+        /** Загружает из хранилища содержимое записи в зависиомсти от его типа. */
+        RecordContentPtr loadContent(Record::Type type, int rowid);
 
         /** Удаляет запись из хранилища. Используется в QML. */
         Q_INVOKABLE void removeRaw(Record *recordRaw);
-
-    private:
-        RecordContentPtr loadContent(Record::Type type, int rowid);
 
     signals:
         void recordRemoved(RecordPtr record) const;
         void recordCreated(RecordPtr record) const;
 
     private:
-        RecordMaster() = default;
+        const QString _tableName = "Records";
 };
 
 } // namespace sp

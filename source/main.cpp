@@ -47,6 +47,10 @@ int main(int argc, char *argv[])
 
     app.setFont(QFont("Roboto"));
 
+    // Debug!!!
+    StorageI.openDb(QStringLiteral("Notes.db"));
+    StorageI.prepareStorage();
+
     // Регистрация классов в QML
     qRegisterMetaType<Record *>("Record *");
     qRegisterMetaType<RecordContent *>("RecordContent *");

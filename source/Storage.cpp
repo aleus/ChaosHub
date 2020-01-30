@@ -2,8 +2,9 @@
 #include "Storage.h"
 #include "Tools.h"
 #include "sqlite3.h"
-
-#include "Record.h" // Debug!!!
+#include "TagMaster.h"
+#include "RecordMaster.h"
+#include "TextNoteMaster.h"
 
 #include <QDebug>
 
@@ -16,12 +17,56 @@ Storage &Storage::instance()
     return storage;
 }
 
+// static ----------------------------------------------------------------------
+std::optional<QUuid> Storage::getId(sqlite3_stmt *stmt, int columnNumber)
+{
+    const void* buf = sqlite3_column_blob(stmt, columnNumber);
+    int bufsize = sqlite3_column_bytes(stmt, columnNumber);
+
+    switch(bufsize) {
+        case 38: // количество символов в человеческом представлении UUID
+            return QUuid(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
+
+        case sizeof(QUuid):
+            return QUuid::fromRfc4122(QByteArray(reinterpret_cast<char *>(const_cast<void*>(buf)), bufsize));
+
+        default:
+            qCritical() << "Error of loading id of record, bufsize =" << bufsize;
+            Q_ASSERT(false);
+            return {};
+    }
+}
+
+// static ----------------------------------------------------------------------
+std::optional<QString> Storage::getString(sqlite3_stmt *stmt, int columnNumber)
+{
+    const uchar* textRaw = sqlite3_column_text(stmt, columnNumber);
+    int textsize = sqlite3_column_bytes(stmt, columnNumber);
+
+    if (textsize > 0) {
+        return QByteArray(reinterpret_cast<const char*>(textRaw), textsize);
+    } else {
+        qCritical() << "Error of getting text in query, column =" << columnNumber;
+        Q_ASSERT(false);
+        return {};
+    }
+}
+
+// static ----------------------------------------------------------------------
+int Storage::getInt(sqlite3_stmt *stmt, int columnNumber)
+{
+    return sqlite3_column_int(stmt, columnNumber);
+}
+
+// static ----------------------------------------------------------------------
+QDateTime Storage::getDate(sqlite3_stmt *stmt, int columnNumber)
+{
+    return QDateTime::fromMSecsSinceEpoch(sqlite3_column_int64(stmt, columnNumber));
+}
+
 //------------------------------------------------------------------------------
 Storage::Storage()
 {
-    // Debug!!!
-    openDb(QStringLiteral("Notes.db"));
-    prepareDb();
 }
 
 //------------------------------------------------------------------------------
@@ -43,46 +88,18 @@ void Storage::openDb(const QString &filePath)
 }
 
 //------------------------------------------------------------------------------
-void Storage::prepareDb()
+void Storage::createTable(const QString &query) {
+    char *zErrMsg = 0;
+    int error = sqlite3_exec(StorageI.db(), query.toUtf8().data(), NULL, 0, &zErrMsg);
+    if (error) {
+        qCritical() << "Can't create table: " << sqlite3_errmsg(StorageI.db()) << endl;
+    }
+}
+
+//------------------------------------------------------------------------------
+void Storage::prepareStorage()
 {
-    auto createTable = [this](const char *query) {
-        char *zErrMsg = 0;
-        int error = sqlite3_exec(_db, query, NULL, 0, &zErrMsg);
-        if (error) {
-            qCritical() << "Can't create table: " << sqlite3_errmsg(_db) << endl;
-        }
-    };
-
-    // Записи в хабе
-    createTable("CREATE TABLE IF NOT EXISTS `Records`("
-                    "`id` BLOB NOT NULL PRIMARY KEY"
-                    ",`type` INTEGER NOT NULL"
-                    ",`contentId` INTEGER NOT NULL"
-                    ",`date` INTEGER"
-                ") WITHOUT ROWID;"
-
-                "CREATE INDEX IF NOT EXISTS `index_id` ON `Records`(`id`);"
-                "CREATE INDEX IF NOT EXISTS `index_contentId` ON `Records`(`contentId`);" );
-
-    // Теги
-    createTable("CREATE TABLE IF NOT EXISTS `Tags`("
-                    "`id` BLOB NOT NULL PRIMARY KEY"
-                    ",`name` TEXT"
-                    ",`parentId` BLOB"
-                ") WITHOUT ROWID;"
-
-                "CREATE INDEX IF NOT EXISTS `index_id` ON `Tags`(`id`);"
-                "CREATE INDEX IF NOT EXISTS `index_parentId` ON `Tags`(`parentId`);");
-
-    // Заметки-Теги
-    createTable("CREATE TABLE IF NOT EXISTS `RecordsTags`("
-                    "`noteId` BLOB NOT NULL REFERENCES `Records` (`id`) ON DELETE CASCADE"
-                    ",`tagId` BLOB NOT NULL REFERENCES `Tags` (`id`) ON DELETE CASCADE"
-                ");"
-
-                "CREATE INDEX IF NOT EXISTS `index_noteId` ON `RecordsTags`(`noteId`);"
-                "CREATE INDEX IF NOT EXISTS `index_tagId` ON `RecordsTags`(`tagId`);");
-
-    // Текстовые заметки
-    createTable("CREATE VIRTUAL TABLE IF NOT EXISTS `TextNotes` USING FTS5(`text`)");
+    RecordMasterI.prepareStorage();
+    TextNoteMasterI.prepareStorage();
+    TagMasterI.prepareStorage();
 }
