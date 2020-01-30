@@ -29,6 +29,27 @@ Item {
     }
 
     //--------------------------------------------------------------------
+    MouseArea {
+        anchors.fill: parent
+        cursorShape: textItem.hoveredLink
+                     ? Qt.PointingHandCursor
+                     : Qt.ArrowCursor
+        acceptedButtons: Qt.RightButton
+        onClicked: {
+            if (mouse.button == Qt.RightButton) {
+                var point = mapToGlobal(mouse.x, mouse.y);
+                var object = {
+                    "record": record,
+                    "hoveredLink": textItem.hoveredLink,
+                    "selectedText": textItem.selectedText
+                }
+
+                contextMenu.open(point.x, point.y, object);
+            }
+        }
+    }
+
+    //--------------------------------------------------------------------
     TextEditSp {
         id: textItem
 
@@ -68,27 +89,6 @@ Item {
             bottom: parent.bottom
             rightMargin: Consts.margin
             bottomMargin: Consts.spacing
-        }
-    }
-
-    //--------------------------------------------------------------------
-    MouseArea {
-        anchors.fill: parent
-        cursorShape: textItem.hoveredLink
-                     ? Qt.PointingHandCursor
-                     : Qt.ArrowCursor
-        acceptedButtons: Qt.RightButton
-        onClicked: {
-            if (mouse.button == Qt.RightButton) {
-                var point = mapToGlobal(mouse.x, mouse.y);
-                var object = {
-                    "record": record,
-                    "hoveredLink": textItem.hoveredLink,
-                    "selectedText": textItem.selectedText
-                }
-
-                contextMenu.open(point.x, point.y, object);
-            }
         }
     }
 }
