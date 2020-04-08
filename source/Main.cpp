@@ -1,5 +1,4 @@
 /// @author M. A. Serebrennikov
-
 #include "Clipboard.h"
 #include "Colors.h"
 #include "Record.h"
@@ -60,18 +59,16 @@ int main(int argc, char *argv[])
     qmlRegisterType<TextEditHelper>("Sp", 1, 0, "TextEditHelper");
 
     // Синглетоны
-    qmlRegisterSingletonInstance("Sp", 1, 0, "TextNoteMaster", &TextNoteMasterI);
-    qmlRegisterSingletonInstance("Sp", 1, 0, "Colors", &ColorsI);
-    qmlRegisterSingletonInstance("Sp", 1, 0, "Clipboard", &ClipboardI);
-
-    // Регистрация переменных в QML
+    context->setContextProperty("TextNoteMaster", &TextNoteMasterI);
+    context->setContextProperty("Colors", &ColorsI);
+    context->setContextProperty("Clipboard", &ClipboardI);
     context->setContextProperty("RecordMaster", &RecordMasterI);
     context->setContextProperty("Storage", &StorageI);
     context->setContextProperty("dp", tools::dp());
     context->setContextProperty("mm", tools::mm());
 
     // Загрузка QML
-    const QUrl url(QStringLiteral("qrc:/main.qml"));
+    const QUrl url(QStringLiteral("qrc:/Root.qml"));
 
     auto onObjectCreated = [url](QObject *obj, const QUrl &objUrl) {
         if (!obj && url == objUrl) {

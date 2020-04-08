@@ -1,7 +1,7 @@
 /// @author M. A. Serebrennikov
 pragma Singleton
 
-import QtQuick 2.14
+import QtQuick 2.12
 
 QtObject {
     readonly property real spacing: 5*dp

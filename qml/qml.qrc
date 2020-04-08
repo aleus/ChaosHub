@@ -1,6 +1,6 @@
 <RCC>
     <qresource prefix="/">
-        <file>main.qml</file>
+        <file>Root.qml</file>
         <file>Components/qmldir</file>
         <file>Components/Consts.qml</file>
         <file>Components/DebugRectangle.qml</file>

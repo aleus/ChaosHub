@@ -1,5 +1,5 @@
 /// @author M. A. Serebrennikov
-import QtQuick 2.14
+import QtQuick 2.12
 import Sp 1.0
 
 /*******************************************************************************

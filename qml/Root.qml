@@ -1,6 +1,6 @@
 /// @author M. A. Serebrennikov
-import QtQuick 2.14
-import QtQuick.Window 2.14
+import QtQuick 2.12
+import QtQuick.Window 2.12
 import Components 1.0
 import TagsList 1.0
 import Editor 1.0

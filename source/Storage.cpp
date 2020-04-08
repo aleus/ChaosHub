@@ -81,6 +81,7 @@ Storage::~Storage()
 void Storage::openDb(const QString &filePath)
 {
     int error = sqlite3_open(filePath.toUtf8().data(), &_db);
+    sqlite3_enable_load_extension(_db, 1);
     if (error) {
         qCritical() << "Can't open database: " << sqlite3_errmsg(_db);
         sqlite3_close(_db);
