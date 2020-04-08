@@ -2,31 +2,52 @@
 #include "TextEditHelper.h"
 
 #include <QQuickTextDocument>
+#include <QTextDocument>
 #include <QStringBuilder>
 #include <QTextDocument>
+#include <QDebug>
 
 using namespace sp;
 
-void TextEditHelper::setTextDocument(QQuickTextDocument *textDocument)
+void TextEditHelper::classBegin()
 {
-    Q_ASSERT_X(!_textDocument, "TextEditHelper", "Changing of textDocument is not supported");
-    _textDocument = textDocument;
 
-    if (!_css.isEmpty()) {
-        _textDocument->textDocument()->setDefaultStyleSheet(_css);
-    }
-
-    format();
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setText(const QString &text)
+void TextEditHelper::componentComplete()
 {
-    if (_text != text) {
-        _text = text;
+    _ready = true;
+    Q_ASSERT(_textDocument);
+    format();
+
+    connect(_textDocument, &QTextDocument::contentsChanged, this, [this]() {
+        // Debug!!!
+        setRawText(_textDocument->toRawText());
+    });
+}
+
+//------------------------------------------------------------------------------
+void TextEditHelper::setRawText(const QString &text)
+{
+    if (_rawText != text) {
+        _rawText = text;
         format();
-        emit textChanged();
+        emit rawTextChanged();
     }
+}
+
+//------------------------------------------------------------------------------
+void TextEditHelper::setTextDocument(QQuickTextDocument *textDocument)
+{
+    Q_ASSERT_X(!_textDocument, "TextEditHelper", "Changing of textDocument is not supported");
+    _textDocument = textDocument->textDocument();
+
+    if (!_css.isEmpty()) {
+        _textDocument->setDefaultStyleSheet(_css);
+    }
+
+    format();
 }
 
 //------------------------------------------------------------------------------
@@ -45,7 +66,7 @@ void TextEditHelper::setCss(const QString &css)
     if (_css != css) {
         _css = css;
         if (_textDocument) {
-            _textDocument->textDocument()->setDefaultStyleSheet(_css);
+            _textDocument->setDefaultStyleSheet(_css);
         }
         format();
         emit cssChanged();
@@ -56,16 +77,16 @@ void TextEditHelper::setCss(const QString &css)
 //------------------------------------------------------------------------------
 void TextEditHelper::format()
 {
-    if (!_textDocument) {
+    if (!_ready || !_textDocument) {
         return;
     }
 
-    QString htmlText(_text);
+    QString htmlText(_rawText);
 
     // Ссылка на сайт
-    QRegExp rx("\\b((?:https?:\\/\\/|www\\d{0,3}[.]|[a-z0-9.\\-]+[.][a-z]{1,4}|localhost\\/?)(?:.?[^\\s()<>.]+|\\((?:[^\\s()<>]+|(?:\\([^\\s()<>]+\\)))*\\))+)");
+    QRegExp rx("(?:(?:http[s]?:\\/\\/)?\\d+[.]\\d+[.]\\d+[.]\\d+|[-a-zA-Z0-9@:%_\\+.~#?&//=]{2,256}\\.[a-z]{2,4}|http[s]?:\\/\\/localhost)\\b(\\/[-a-zA-Z0-9@:%_\\+.~#?&//=]*)?");
     for (int pos = 0, shift = 0
-         ; (pos = rx.indexIn(_text, pos)) != -1
+         ; (pos = rx.indexIn(_rawText, pos)) != -1
          ; pos += rx.matchedLength())
     {
         static QString suffix("</a>");
@@ -78,9 +99,10 @@ void TextEditHelper::format()
 
     // Перевод строки
     htmlText.replace('\n', QStringLiteral("<BR>\n"));
+    qDebug() << "format" << htmlText;
 
     updateCss();
-    _textDocument->textDocument()->setHtml("<html><body>" + htmlText + "</body><html>");
+    _textDocument->setHtml("<html><body>" + htmlText + "</body><html>");
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +131,7 @@ QString TextEditHelper::formatUrl(const QString &url) const
 void TextEditHelper::updateCss()
 {
     if (_css.isEmpty()) {
-        _textDocument->textDocument()->setDefaultStyleSheet(
+        _textDocument->setDefaultStyleSheet(
                     QString("body { line-height: %1 } \n"
                             "a { text-decoration: none; color: %2}")
                     .arg(_lineHeight)

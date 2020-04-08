@@ -19,6 +19,9 @@ namespace sp {
  * В то же время синглетон не хранит объекты Record. Они по своей сути
  * являются временным объектами, которые используются в GUI (к примеру
  * внутри модели RecordModel).
+ *
+ * Однако же для создания записей используются конкретные мастера:
+ * TextNoteMaster, ImageNoteMaster, LinkNoteMaster и т.д.
  ****************************************************************************/
 class RecordMaster: public QObject
 {
@@ -41,12 +44,13 @@ class RecordMaster: public QObject
         // Special
         //--------------------------------------------------------------------
         /** Добавляет запись в хранилище. */
-        void append(const RecordPtr &record);
+        void add(const RecordPtr &record);
 
         /** Удаляет запись из хранилища и приложения. */
         void remove(const RecordPtr &record);
         void remove(const QVector<RecordPtr> &records);
         void remove(const QVector<QUuid> &records);
+        Q_INVOKABLE void remove(Record *recordRaw);
 
         /** Подготавливает хранилище для дальнейшей работы (создаёт таблицы). */
         void prepareStorage() const;
@@ -56,9 +60,6 @@ class RecordMaster: public QObject
 
         /** Загружает из хранилища содержимое записи в зависиомсти от его типа. */
         RecordContentPtr loadContent(Record::Type type, int rowid);
-
-        /** Удаляет запись из хранилища. Используется в QML. */
-        Q_INVOKABLE void removeRaw(Record *recordRaw);
 
     signals:
         void recordRemoved(RecordPtr record) const;

@@ -38,16 +38,16 @@ std::optional<QUuid> Storage::getId(sqlite3_stmt *stmt, int columnNumber)
 }
 
 // static ----------------------------------------------------------------------
-std::optional<QString> Storage::getString(sqlite3_stmt *stmt, int columnNumber)
+QString Storage::getString(sqlite3_stmt *stmt, int columnNumber)
 {
     const uchar* textRaw = sqlite3_column_text(stmt, columnNumber);
     int textsize = sqlite3_column_bytes(stmt, columnNumber);
 
     if (textsize > 0) {
-        return QByteArray(reinterpret_cast<const char*>(textRaw), textsize);
+        return QString::fromUtf8(QByteArray(reinterpret_cast<const char*>(textRaw), textsize));
     } else {
-        qCritical() << "Error of getting text in query, column =" << columnNumber;
-        Q_ASSERT(false);
+        // qCritical() << "Error of getting text in query, column =" << columnNumber;
+        // Q_ASSERT(false);
         return {};
     }
 }

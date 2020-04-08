@@ -50,7 +50,7 @@ Item {
 
         MenuButton {
             text: qsTr("Copy text")
-            visible: contextMenu.contextObject != null
+            visible: Boolean(contextMenu.contextObject)
                      && contextMenu.contextObject.selectedText === ""
             onClicked: {
                 Clipboard.text = contextMenu.contextObject.record.content.text;
@@ -59,7 +59,7 @@ Item {
 
         MenuButton {
             text: qsTr("Copy selected text")
-            visible: contextMenu.contextObject != null
+            visible: Boolean(contextMenu.contextObject)
                      && contextMenu.contextObject.selectedText !== ""
             onClicked: {
                 Clipboard.text = contextMenu.contextObject.selectedText;
@@ -68,7 +68,7 @@ Item {
 
         MenuButton {
             text: qsTr("Copy link")
-            visible: contextMenu.contextObject != null
+            visible: Boolean(contextMenu.contextObject)
                      && contextMenu.contextObject.hoveredLink !== ""
             onClicked: {
                 Clipboard.text = contextMenu.contextObject.hoveredLink;
@@ -79,7 +79,7 @@ Item {
             text: qsTr("Delete record")
             onClicked: {
                 var record = contextMenu.contextObject.record;
-                RecordMaster.removeRaw(record);
+                RecordMaster.remove(record);
             }
         }
     } // ContextMenu { id: contextMenu

@@ -3,51 +3,53 @@ QT += quick quickcontrols2 widgets network multimedia svg xml
 CONFIG += c++17
 
 INCLUDEPATH += \
-    include \
+    Source \
 
 HEADERS += \ \
-    include/Clipboard.h \
-    include/Colors.h \
-    include/Defer.h \
-    include/PointersTypedef.h \
-    include/Record.h \
-    include/RecordContent.h \
-    include/RecordMaster.h \
-    include/RecordModel.h \
-    include/Storage.h \
-    include/Tag.h \
-    include/TagMaster.h \
-    include/TagModel.h \
-    include/TextEditHelper.h \
-    include/TextNote.h \
-    include/TextNoteMaster.h \
-    include/Tools.h
+    Source/Clipboard.h \
+    Source/Colors.h \
+    Source/Defer.h \
+    Source/PointersTypedef.h \
+    Source/Record.h \
+    Source/RecordContent.h \
+    Source/RecordMaster.h \
+    Source/RecordModel.h \
+    Source/Storage.h \
+    Source/Tag.h \
+    Source/TagMaster.h \
+    Source/TagModel.h \
+    Source/TextEditHelper.h \
+    Source/TextNote.h \
+    Source/TextNoteMaster.h \
+    Source/Tools.h
 
 SOURCES += \
-    source/Clipboard.cpp \
-    source/Colors.cpp \
-    source/Main.cpp \
-    source/Record.cpp \
-    source/RecordContent.cpp \
-    source/RecordMaster.cpp \
-    source/RecordModel.cpp \
-    source/Storage.cpp \
-    source/Tag.cpp \
-    source/TagMaster.cpp \
-    source/TagModel.cpp \
-    source/TextEditHelper.cpp \
-    source/TextNote.cpp \
-    source/TextNoteMaster.cpp \
-    source/Tools.cpp \
+    Source/Clipboard.cpp \
+    Source/Colors.cpp \
+    Source/Main.cpp \
+    Source/Record.cpp \
+    Source/RecordContent.cpp \
+    Source/RecordMaster.cpp \
+    Source/RecordModel.cpp \
+    Source/Storage.cpp \
+    Source/Tag.cpp \
+    Source/TagMaster.cpp \
+    Source/TagModel.cpp \
+    Source/TextEditHelper.cpp \
+    Source/TextNote.cpp \
+    Source/TextNoteMaster.cpp \
+    Source/Tools.cpp \
+
+RESOURCES += \
+    Fonts/Fonts.qrc \
+    Images/Images.qrc \
+    Qml/Qml.qrc
+
+QML_IMPORT_PATH = $$PWD/qml
+
+include(Libs/sqlite/sqlite.pri)
+
 
 # lupdate_only {
 #     SOURCES += qml/*.qml
 # }
-
-RESOURCES += \
-    fonts/fonts.qrc \
-    qml/qml.qrc
-
-QML_IMPORT_PATH = $$PWD/qml
-
-include(libs/sqlite/sqlite.pri)

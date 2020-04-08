@@ -32,11 +32,11 @@ QVector<TagPtr> TagMaster::get()
         int res = sqlite3_step (stmt);
 
         if (res == SQLITE_ROW) {
-            auto name     = Storage::getString(stmt, 0); if (!name) { continue; }
-            auto id       = Storage::getId(stmt, 1);     if (!id) { continue; }
-            auto parentId = Storage::getId(stmt, 2);     if (!parentId) { continue; }
+            auto name     = Storage::getString(stmt, 0);
+            auto id       = Storage::getId(stmt, 1); if (!id) { continue; }
+            auto parentId = Storage::getId(stmt, 2); if (!parentId) { continue; }
 
-            TagPtr tag(new Tag(*name, *id, *parentId));
+            TagPtr tag(new Tag(name, *id, *parentId));
             result.append(tag);
         } else if (res == SQLITE_DONE) {
             break;
@@ -129,7 +129,7 @@ void TagMaster::prepareStorage() const
 }
 
 //------------------------------------------------------------------------------
-void TagMaster::removeRaw(Tag *tagRaw)
+void TagMaster::remove(Tag *tagRaw)
 {
     if (!tagRaw) {
         Q_ASSERT(false);

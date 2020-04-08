@@ -45,7 +45,7 @@ void TextNoteMaster::create(const QString &text)
         (*textNote)->setRowid(rowid);
         _notes.insert(rowid, textNote);
 
-        RecordMasterI.append(record);
+        RecordMasterI.add(record);
     }
 }
 
@@ -67,7 +67,7 @@ RecordContentPtr TextNoteMaster::get(int rowid)
 
             if (res == SQLITE_ROW) {
                 auto text = Storage::getString(stmt, 0);
-                auto *note = new RecordContentPtr(new TextNote(rowid, *text));
+                auto *note = new RecordContentPtr(new TextNote(rowid, text));
                 _notes.insert(rowid, note);
 
                 return *note;

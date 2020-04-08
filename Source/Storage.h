@@ -45,7 +45,7 @@ class Storage: public QObject
          * @param stmt структура состояния SQLite-запроса
          * @param columNumber номер столбца из запроса
          */
-        static std::optional<QString> getString(sqlite3_stmt *stmt, int columnNumber);
+        static QString getString(sqlite3_stmt *stmt, int columnNumber);
 
         /**
          * @brief Возвращает int из проведённого запроса.

@@ -22,7 +22,7 @@ int main(int argc, char *argv[])
     // Отключено qml кеширование, т.к. глючат иногда enum'ы.
     qputenv("QML_DISABLE_DISK_CACHE", "1");
 
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    //QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
@@ -31,18 +31,18 @@ int main(int argc, char *argv[])
 
     // Тюнинг шрифтов
     // QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Black.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-BlackItalic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Bold.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-BoldItalic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Italic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Light.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-LightItalic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Medium.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-MediumItalic.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Regular.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-Thin.ttf");
-    QFontDatabase::addApplicationFont(":/fonts/Roboto-ThinItalic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Black.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-BlackItalic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Bold.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-BoldItalic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Italic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Light.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-LightItalic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Medium.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-MediumItalic.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Regular.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-Thin.ttf");
+    QFontDatabase::addApplicationFont(":/Roboto-ThinItalic.ttf");
 
     app.setFont(QFont("Roboto"));
 

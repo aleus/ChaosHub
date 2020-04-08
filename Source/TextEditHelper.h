@@ -3,7 +3,9 @@
 
 #include <QObject>
 #include <QColor>
+#include <QQmlParserStatus>
 
+class QTextDocument;
 class QQuickTextDocument;
 
 namespace sp {
@@ -19,26 +21,22 @@ namespace sp {
  *
  * @todo Разделить класс и вынести в библиотеку sp_libs.
  ****************************************************************************/
-class TextEditHelper: public QObject
+class TextEditHelper: public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
-    Q_PROPERTY(QQuickTextDocument* textDocument READ textDocument WRITE setTextDocument NOTIFY textDocumentChanged)
-    Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
+    Q_PROPERTY(QString rawText READ rawText WRITE setRawText NOTIFY rawTextChanged)
+    Q_PROPERTY(QQuickTextDocument* textDocument WRITE setTextDocument CONSTANT)
     Q_PROPERTY(QString css READ css WRITE setCss NOTIFY cssChanged)
     Q_PROPERTY(double lineHeight READ lineHeight WRITE setLineHeight NOTIFY lineHeightChanged)
     Q_PROPERTY(QColor linkColor READ linkColor WRITE setColor NOTIFY colorChanged)
+
+    Q_INTERFACES(QQmlParserStatus)
 
     public:
         //--------------------------------------------------------------------
         // Get
         //--------------------------------------------------------------------
-        /** Возвращает указатель на QQuickTextDocument, полученный от TextEdit. */
-        inline QQuickTextDocument *textDocument() const { return _textDocument; }
-
-        /** Возвращает изначальный текст. */
-        inline const QString& text() const { return _text; }
-
         /** Возвращает межстрочный интервал в относительных единицах (1.0, 1.5 и т.п.) */
         inline double lineHeight() const { return _lineHeight; }
 
@@ -48,14 +46,14 @@ class TextEditHelper: public QObject
         /** Возвращает цвет ссылки. */
         inline const QColor& linkColor() const { return _linkColor; }
 
+        /** Возвращает текст без форматирования, полученный из textDocument. */
+        inline const QString& rawText() const { return _rawText; }
+
         //--------------------------------------------------------------------
         // Set
         //--------------------------------------------------------------------
-        /** Устанавливает указатель на QQuickTextDocument, полученный от TextEdit. */
+        /** Устанавливает указатель на QTextDocument, полученный от TextEdit. */
         void setTextDocument(QQuickTextDocument *textDocument);
-
-        /** Устанавливает изначальный текст, перед его форматированием. */
-        void setText(const QString &text);
 
         /** Устанавливает межстрочный интервал. */
         void setLineHeight(double lineHeight);
@@ -66,6 +64,9 @@ class TextEditHelper: public QObject
         /** Устанавливает цвет ссылки. */
         void setColor(const QColor &linkColor);
 
+        /** Устанавливает текст. */
+        void setRawText(const QString &text);
+
         //--------------------------------------------------------------------
         // Special
         //--------------------------------------------------------------------
@@ -75,6 +76,12 @@ class TextEditHelper: public QObject
          * элемента TextEdit
          */
         Q_INVOKABLE void format();
+
+        //----------------------------------------------------------------------
+        // Override
+        //----------------------------------------------------------------------
+        void classBegin() override;
+        void componentComplete() override;
 
     private:
 
@@ -88,18 +95,18 @@ class TextEditHelper: public QObject
         void updateCss();
 
     signals:
-        void textDocumentChanged() const;
         void lineHeightChanged() const;
-        void textChanged() const;
+        void rawTextChanged() const;
         void cssChanged() const;
         void colorChanged();
 
     private:
-        QQuickTextDocument* _textDocument = nullptr;
+        QTextDocument* _textDocument = nullptr;
         double _lineHeight = 1.0;
-        QString _text;
+        QString _rawText;
         QString _css;
         QColor _linkColor = "blue";
+        bool _ready = false;
 };
 
 } // namespace sp

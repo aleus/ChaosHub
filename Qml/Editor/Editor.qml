@@ -9,16 +9,17 @@ import Sp 1.0
 Item {
     id: _editor
 
-    height: Math.max(textEdit.height, sendButton.height) + 2*Consts.spacing
+    height: Math.max(textEdit.height, sendButton.height) + 2*Consts.spacing //+ tagsEdit.height
 
     Rectangle {
         color: Colors.editorBackground
         anchors.fill: parent
     }
 
-    TextEdit {
+    TextEditSp {
         id: textEdit
 
+        placeholderText: qsTr("Write a note...")
         focus: true
         padding: Consts.spacing
         font.pixelSize: Consts.fontNormal
@@ -27,24 +28,10 @@ Item {
         anchors {
             left: parent.left
             right: sendButton.left
+            bottom: parent.bottom
             margins: Consts.spacing
             leftMargin: Consts.margin
             rightMargin: Consts.margin
-            verticalCenter: parent.verticalCenter
-        }
-
-        Text {
-            id: placeholder
-
-            text: qsTr("Write a note...")
-            font: parent.font
-            visible: parent.text == ""
-            color: Colors.text
-            anchors {
-                top: parent.top
-                left: parent.left
-                margins: Consts.spacing
-            }
         }
 
         Keys.onPressed: {
@@ -52,26 +39,50 @@ Item {
                 case Qt.Key_Enter:
                 case Qt.Key_Return:
                     if (event.modifiers & Qt.ControlModifier) {
+                        console.log("text: /" + textEdit.text + "/");
                         _editor.addTextNote();
                         event.accepted = true;
                     }
                     break;
             }
         } // Keys.onPressed: {
+
+        //KeyNavigation.onTabChanged: tagsEdit
     } // TextEdit { id: textEdit
+
+    // TextEditSp {
+    //     id: tagsEdit
+
+    //     focus: false
+    //     DebugRectangle {}
+    //     anchors {
+    //         left: textEdit.left
+    //         right: textEdit.right
+    //         bottom: textEdit.top
+    //     }
+    // }
 
     SendButton {
         id: sendButton
+
+        visible: textEdit.displayText !== ""
         anchors {
             right: parent.right
             bottom: parent.bottom
-            margins: Consts.spacing
+            rightMargin: Consts.margin
+            bottomMargin: Consts.spacing
+        }
+
+        onClicked: {
+            _editor.addTextNote();
         }
     } // MouseArea { id: sendButton
 
     //--------------------------------------------------------------------
     function addTextNote() {
-        TextNoteMaster.create(textEdit.text);
-        textEdit.text = "";
+        if (textEdit.text.trim() !== "") {
+            TextNoteMaster.create(textEdit.text.trim());
+            textEdit.text = "";
+        }
     }
 }

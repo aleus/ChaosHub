@@ -36,7 +36,7 @@ Item {
                      : Qt.ArrowCursor
         acceptedButtons: Qt.RightButton
         onClicked: {
-            if (mouse.button == Qt.RightButton) {
+            if (mouse.button === Qt.RightButton) {
                 var point = mapToGlobal(mouse.x, mouse.y);
                 var object = {
                     "record": record,
@@ -61,16 +61,16 @@ Item {
         selectionColor: Colors.selection
         selectByMouse: true
         readOnly: true
-        linkColor: Colors.link
-        lineHeight: 1.1
-
         width: _textNote.parent.width - 4*_textNote.anchors.margins
+
         anchors {
             top: parent.top
             left: parent.left
             topMargin: Consts.margin
             leftMargin: Consts.margin
         }
+
+        DebugRectangle {}
 
         onLinkActivated: {
             Qt.openUrlExternally(link);

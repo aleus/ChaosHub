@@ -9,15 +9,16 @@ import Sp 1.0
 MouseArea {
     id: sendButton
     
-    height: Consts.buttonHeight
     width: height
-    
-    Rectangle {
-        color: Colors.gray1
-        anchors.fill: parent
-    }
-    
-    onClicked: {
-        _editor.addTextNote();
+    height: Consts.buttonHeight
+
+    Image {
+        id: imageItem
+
+        source: "qrc:/RightArrow.svg"
+        fillMode: Image.PreserveAspectFit
+        height: Consts.imageInButtonHeight
+        sourceSize: Qt.size(width, height)
+        anchors.centerIn: parent
     }
 }

@@ -52,7 +52,7 @@ QVector<RecordPtr> RecordMaster::get(const QString &tag, int limit, int offset)
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::append(const RecordPtr &record)
+void RecordMaster::add(const RecordPtr &record)
 {
     Q_ASSERT(record->content());
     Q_ASSERT(record->content()->rowid() > 0);
@@ -115,7 +115,7 @@ void RecordMaster::prepareStorage() const
 }
 
 //------------------------------------------------------------------------------
-void RecordMaster::removeRaw(Record *recordRaw)
+void RecordMaster::remove(Record *recordRaw)
 {
     if (!recordRaw) {
         Q_ASSERT(false);

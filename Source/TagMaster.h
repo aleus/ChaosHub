@@ -56,7 +56,7 @@ class TagMaster: public QObject
         TagMaster() = default;
 
         /** Удаляет запись из хранилища. Используется в QML. */
-        Q_INVOKABLE void removeRaw(Tag *tagRaw);
+        Q_INVOKABLE void remove(Tag *tagRaw);
 
     signals:
         void tagCreated(TagPtr tag) const;
