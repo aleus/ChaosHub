@@ -50,7 +50,7 @@ Item {
     }
 
     //--------------------------------------------------------------------
-    TextEditSp {
+    TextSp {
         id: textItem
 
         text: record.content.text
@@ -69,8 +69,6 @@ Item {
             topMargin: Consts.margin
             leftMargin: Consts.margin
         }
-
-        DebugRectangle {}
 
         onLinkActivated: {
             Qt.openUrlExternally(link);

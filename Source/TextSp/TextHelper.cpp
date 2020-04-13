@@ -1,34 +1,34 @@
 /// @author M. A. Serebrennikov
-#include "TextEditHelper.h"
+#include "TextHelper.h"
 
+#include <QAbstractTextDocumentLayout>
+#include <QDebug>
 #include <QQuickTextDocument>
-#include <QTextDocument>
 #include <QStringBuilder>
 #include <QTextDocument>
-#include <QDebug>
+#include <QTextDocument>
 
 using namespace sp;
 
-void TextEditHelper::classBegin()
+void TextHelper::classBegin()
 {
 
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::componentComplete()
+void TextHelper::componentComplete()
 {
-    _ready = true;
     Q_ASSERT(_textDocument);
+    _ready = true;
     format();
 
-    connect(_textDocument, &QTextDocument::contentsChanged, this, [this]() {
-        // Debug!!!
+    connect(_textDocument, &QTextDocument::contentsChanged, this, [=]() {
         setRawText(_textDocument->toRawText());
     });
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setRawText(const QString &text)
+void TextHelper::setRawText(const QString &text)
 {
     if (_rawText != text) {
         _rawText = text;
@@ -38,9 +38,9 @@ void TextEditHelper::setRawText(const QString &text)
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setTextDocument(QQuickTextDocument *textDocument)
+void TextHelper::setTextDocument(QQuickTextDocument *textDocument)
 {
-    Q_ASSERT_X(!_textDocument, "TextEditHelper", "Changing of textDocument is not supported");
+    Q_ASSERT_X(!_textDocument, "TextHelper", "Changing of textDocument is not supported");
     _textDocument = textDocument->textDocument();
 
     if (!_css.isEmpty()) {
@@ -51,7 +51,7 @@ void TextEditHelper::setTextDocument(QQuickTextDocument *textDocument)
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setLineHeight(double lineHeight)
+void TextHelper::setLineHeight(double lineHeight)
 {
     if (!qFuzzyCompare(_lineHeight, lineHeight)) {
         _lineHeight = lineHeight;
@@ -61,7 +61,7 @@ void TextEditHelper::setLineHeight(double lineHeight)
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setCss(const QString &css)
+void TextHelper::setCss(const QString &css)
 {
     if (_css != css) {
         _css = css;
@@ -75,7 +75,7 @@ void TextEditHelper::setCss(const QString &css)
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::format()
+void TextHelper::format()
 {
     if (!_ready || !_textDocument) {
         return;
@@ -99,14 +99,13 @@ void TextEditHelper::format()
 
     // Перевод строки
     htmlText.replace('\n', QStringLiteral("<BR>\n"));
-    qDebug() << "format" << htmlText;
 
-    updateCss();
+     updateCss();
     _textDocument->setHtml("<html><body>" + htmlText + "</body><html>");
 }
 
 //------------------------------------------------------------------------------
-void TextEditHelper::setColor(const QColor &linkColor)
+void TextHelper::setColor(const QColor &linkColor)
 {
     if (_linkColor != linkColor) {
         _linkColor = linkColor;
@@ -116,7 +115,7 @@ void TextEditHelper::setColor(const QColor &linkColor)
 }
 
 //------------------------------------------------------------------------------
-QString TextEditHelper::formatUrl(const QString &url) const
+QString TextHelper::formatUrl(const QString &url) const
 {
     if (url.startsWith("http://") || url.startsWith("https://")) {
         return url;
@@ -128,7 +127,7 @@ QString TextEditHelper::formatUrl(const QString &url) const
 }
 
 //---------------------------------------------------------------------------------------
-void TextEditHelper::updateCss()
+void TextHelper::updateCss()
 {
     if (_css.isEmpty()) {
         _textDocument->setDefaultStyleSheet(

@@ -18,7 +18,7 @@ HEADERS += \ \
     Source/Tag.h \
     Source/TagMaster.h \
     Source/TagModel.h \
-    Source/TextEditHelper.h \
+    Source/TextSp/TextHelper.h \
     Source/TextNote.h \
     Source/TextNoteMaster.h \
     Source/Tools.h
@@ -35,7 +35,7 @@ SOURCES += \
     Source/Tag.cpp \
     Source/TagMaster.cpp \
     Source/TagModel.cpp \
-    Source/TextEditHelper.cpp \
+    Source/TextSp/TextHelper.cpp \
     Source/TextNote.cpp \
     Source/TextNoteMaster.cpp \
     Source/Tools.cpp \

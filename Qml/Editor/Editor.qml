@@ -16,10 +16,9 @@ Item {
         anchors.fill: parent
     }
 
-    TextEditSp {
+    TextEdit {
         id: textEdit
 
-        placeholderText: qsTr("Write a note...")
         focus: true
         padding: Consts.spacing
         font.pixelSize: Consts.fontNormal
@@ -48,9 +47,23 @@ Item {
         } // Keys.onPressed: {
 
         //KeyNavigation.onTabChanged: tagsEdit
+
+        Text {
+            id: placeholderItem
+
+            text: qsTr("Write a note...")
+            font: parent.font
+            visible: parent.text === ""
+            color: Colors.text
+            anchors {
+                top: parent.top
+                left: parent.left
+                margins: Consts.spacing
+            }
+        }
     } // TextEdit { id: textEdit
 
-    // TextEditSp {
+    // TextSp {
     //     id: tagsEdit
 
     //     focus: false

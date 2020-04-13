@@ -2,6 +2,6 @@ module Components
 singleton Consts 1.0 Consts.qml
 RoundButton 1.0 RoundButton.qml
 DebugRectangle 1.0 DebugRectangle.qml
-TextEditSp 1.0 TextEditSp.qml
+TextSp 1.0 TextSp.qml
 ContextMenu 1.0 ContextMenu.qml
 MenuButton 1.0 MenuButton.qml

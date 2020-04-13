@@ -5,7 +5,7 @@
 #include "RecordMaster.h"
 #include "RecordModel.h"
 #include "Storage.h"
-#include "TextEditHelper.h"
+#include "TextSp/TextHelper.h"
 #include "TextNote.h"
 #include "TextNoteMaster.h"
 #include "Tools.h"
@@ -56,7 +56,7 @@ int main(int argc, char *argv[])
     qRegisterMetaType<TextNote *>("TextNote *");
 
     qmlRegisterType<RecordModel>("Sp", 1, 0, "RecordModel");
-    qmlRegisterType<TextEditHelper>("Sp", 1, 0, "TextEditHelper");
+    qmlRegisterType<TextHelper>("Sp", 1, 0, "TextHelper");
 
     // Синглетоны
     context->setContextProperty("TextNoteMaster", &TextNoteMasterI);

@@ -21,7 +21,7 @@ namespace sp {
  *
  * @todo Разделить класс и вынести в библиотеку sp_libs.
  ****************************************************************************/
-class TextEditHelper: public QObject, public QQmlParserStatus
+class TextHelper: public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
@@ -84,7 +84,6 @@ class TextEditHelper: public QObject, public QQmlParserStatus
         void componentComplete() override;
 
     private:
-
         /**
          * Приводит url к стандартному виду (без этого ссылка "ya.ru" не
          * откроется в браузере).
@@ -102,10 +101,10 @@ class TextEditHelper: public QObject, public QQmlParserStatus
 
     private:
         QTextDocument* _textDocument = nullptr;
-        double _lineHeight = 1.0;
         QString _rawText;
         QString _css;
         QColor _linkColor = "blue";
+        double _lineHeight = 1.0;
         bool _ready = false;
 };
 
