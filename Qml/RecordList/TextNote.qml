@@ -13,9 +13,7 @@ Item {
     readonly property alias selectedText: textItem.selectedText
     readonly property alias hoveredLink: textItem.hoveredLink
 
-    width: textItem.lineCount <= 1
-           ? Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin
-           : parent.width - 2*anchors.margins
+    width: Math.min(Math.max(textItem.contentWidth, dateItem.width) + 2*textItem.anchors.leftMargin, parent.width - 2*anchors.margins)
     height: textItem.contentHeight + 2*textItem.anchors.topMargin + Consts.margin
     anchors {
         left: parent.left

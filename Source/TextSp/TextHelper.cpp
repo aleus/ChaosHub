@@ -6,7 +6,7 @@
 #include <QQuickTextDocument>
 #include <QStringBuilder>
 #include <QTextDocument>
-#include <QTextDocument>
+#include <QTextCursor>
 
 using namespace sp;
 
@@ -20,21 +20,7 @@ void TextHelper::componentComplete()
 {
     Q_ASSERT(_textDocument);
     _ready = true;
-    format();
-
-    connect(_textDocument, &QTextDocument::contentsChanged, this, [=]() {
-        setRawText(_textDocument->toRawText());
-    });
-}
-
-//------------------------------------------------------------------------------
-void TextHelper::setRawText(const QString &text)
-{
-    if (_rawText != text) {
-        _rawText = text;
-        format();
-        emit rawTextChanged();
-    }
+    connect(_textDocument, &QTextDocument::contentsChange, this, &TextHelper::onContentsChange);
 }
 
 //------------------------------------------------------------------------------
@@ -42,12 +28,6 @@ void TextHelper::setTextDocument(QQuickTextDocument *textDocument)
 {
     Q_ASSERT_X(!_textDocument, "TextHelper", "Changing of textDocument is not supported");
     _textDocument = textDocument->textDocument();
-
-    if (!_css.isEmpty()) {
-        _textDocument->setDefaultStyleSheet(_css);
-    }
-
-    format();
 }
 
 //------------------------------------------------------------------------------
@@ -55,53 +35,48 @@ void TextHelper::setLineHeight(double lineHeight)
 {
     if (!qFuzzyCompare(_lineHeight, lineHeight)) {
         _lineHeight = lineHeight;
-        format();
         emit lineHeightChanged();
     }
 }
 
 //------------------------------------------------------------------------------
-void TextHelper::setCss(const QString &css)
+void TextHelper::onContentsChange(int /*position*/, int /*charsRemoved*/, int /*charsAdded*/)
 {
-    if (_css != css) {
-        _css = css;
-        if (_textDocument) {
-            _textDocument->setDefaultStyleSheet(_css);
-        }
-        format();
-        emit cssChanged();
-    }
 
-}
-
-//------------------------------------------------------------------------------
-void TextHelper::format()
-{
     if (!_ready || !_textDocument) {
         return;
     }
 
-    QString htmlText(_rawText);
+    // TODO Optimize with help of variables: position, charsRemoved and charsAdded
+    QTextCursor cursor(_textDocument);
+    auto text = _textDocument->toRawText();
 
-    // Ссылка на сайт
+    // Clear format
+    QTextCharFormat normalTextFormat;
+    QTextBlockFormat normalBlockFormat;
+    normalBlockFormat.setLineHeight(_lineHeight*100, QTextBlockFormat::ProportionalHeight);
+
+    cursor.setPosition(0);
+    cursor.setPosition(text.count(), QTextCursor::KeepAnchor);
+    cursor.setCharFormat(normalTextFormat);
+    cursor.setBlockFormat(normalBlockFormat);
+
+    // Highlight links
     QRegExp rx("(?:(?:http[s]?:\\/\\/)?\\d+[.]\\d+[.]\\d+[.]\\d+|[-a-zA-Z0-9@:%_\\+.~#?&//=]{2,256}\\.[a-z]{2,4}|http[s]?:\\/\\/localhost)\\b(\\/[-a-zA-Z0-9@:%_\\+.~#?&//=]*)?");
-    for (int pos = 0, shift = 0
-         ; (pos = rx.indexIn(_rawText, pos)) != -1
+    for (int pos = 0
+         ; (pos = rx.indexIn(text, pos)) != -1
          ; pos += rx.matchedLength())
     {
-        static QString suffix("</a>");
-        QString prefix = "<a href='" % formatUrl(rx.cap(0)) % "'>";
+        QString url = formatUrl(rx.cap(0));
+        QTextCharFormat linkFormat;
+        linkFormat.setAnchorHref(url);
+        linkFormat.setAnchor(true);
+        linkFormat.setForeground({_linkColor});
 
-        htmlText.insert(shift + pos + rx.matchedLength(), suffix);
-        htmlText.insert(shift + pos, prefix);
-        shift += suffix.length() + prefix.length();
+        cursor.setPosition(pos);
+        cursor.setPosition(pos+rx.matchedLength(), QTextCursor::KeepAnchor);
+        cursor.setCharFormat(linkFormat);
     }
-
-    // Перевод строки
-    htmlText.replace('\n', QStringLiteral("<BR>\n"));
-
-     updateCss();
-    _textDocument->setHtml("<html><body>" + htmlText + "</body><html>");
 }
 
 //------------------------------------------------------------------------------
@@ -109,7 +84,6 @@ void TextHelper::setColor(const QColor &linkColor)
 {
     if (_linkColor != linkColor) {
         _linkColor = linkColor;
-        format();
         emit colorChanged();
     }
 }
@@ -124,16 +98,4 @@ QString TextHelper::formatUrl(const QString &url) const
         QString result = "https://" + url;
         return result;
     }
-}
-
-//---------------------------------------------------------------------------------------
-void TextHelper::updateCss()
-{
-    if (_css.isEmpty()) {
-        _textDocument->setDefaultStyleSheet(
-                    QString("body { line-height: %1 } \n"
-                            "a { text-decoration: none; color: %2}")
-                    .arg(_lineHeight)
-                    .arg(_linkColor.name()));
-    } // Иначе стиль устанавливается в setCss
 }

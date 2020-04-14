@@ -16,7 +16,7 @@ Item {
         anchors.fill: parent
     }
 
-    TextEdit {
+    TextSp {
         id: textEdit
 
         focus: true
@@ -38,7 +38,6 @@ Item {
                 case Qt.Key_Enter:
                 case Qt.Key_Return:
                     if (event.modifiers & Qt.ControlModifier) {
-                        console.log("text: /" + textEdit.text + "/");
                         _editor.addTextNote();
                         event.accepted = true;
                     }

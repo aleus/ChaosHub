@@ -25,9 +25,8 @@ class TextHelper: public QObject, public QQmlParserStatus
 {
     Q_OBJECT
 
-    Q_PROPERTY(QString rawText READ rawText WRITE setRawText NOTIFY rawTextChanged)
     Q_PROPERTY(QQuickTextDocument* textDocument WRITE setTextDocument CONSTANT)
-    Q_PROPERTY(QString css READ css WRITE setCss NOTIFY cssChanged)
+    // Q_PROPERTY(QString css READ css WRITE setCss NOTIFY cssChanged)
     Q_PROPERTY(double lineHeight READ lineHeight WRITE setLineHeight NOTIFY lineHeightChanged)
     Q_PROPERTY(QColor linkColor READ linkColor WRITE setColor NOTIFY colorChanged)
 
@@ -40,14 +39,8 @@ class TextHelper: public QObject, public QQmlParserStatus
         /** Возвращает межстрочный интервал в относительных единицах (1.0, 1.5 и т.п.) */
         inline double lineHeight() const { return _lineHeight; }
 
-        /** Возвращает CSS форматируемого текста. */
-        inline const QString& css() const { return _css; }
-
         /** Возвращает цвет ссылки. */
         inline const QColor& linkColor() const { return _linkColor; }
-
-        /** Возвращает текст без форматирования, полученный из textDocument. */
-        inline const QString& rawText() const { return _rawText; }
 
         //--------------------------------------------------------------------
         // Set
@@ -58,24 +51,8 @@ class TextHelper: public QObject, public QQmlParserStatus
         /** Устанавливает межстрочный интервал. */
         void setLineHeight(double lineHeight);
 
-        /** Устанавливает css форматируемого текста. */
-        void setCss(const QString &css);
-
         /** Устанавливает цвет ссылки. */
         void setColor(const QColor &linkColor);
-
-        /** Устанавливает текст. */
-        void setRawText(const QString &text);
-
-        //--------------------------------------------------------------------
-        // Special
-        //--------------------------------------------------------------------
-        /**
-         * @brief Форматирует текст и устанавливает его в TextEdit.
-         * @warning Для правильной работы нужно вызвать в Component.onCompleted
-         * элемента TextEdit
-         */
-        Q_INVOKABLE void format();
 
         //----------------------------------------------------------------------
         // Override
@@ -90,19 +67,14 @@ class TextHelper: public QObject, public QQmlParserStatus
          */
         QString formatUrl(const QString &url) const;
 
-        /** Либо составляет CSS из указанных свойств, либо использует _css (если не пуста). */
-        void updateCss();
+        void onContentsChange(int position, int charsRemoved, int charsAdded);
 
     signals:
         void lineHeightChanged() const;
-        void rawTextChanged() const;
-        void cssChanged() const;
         void colorChanged();
 
     private:
         QTextDocument* _textDocument = nullptr;
-        QString _rawText;
-        QString _css;
         QColor _linkColor = "blue";
         double _lineHeight = 1.0;
         bool _ready = false;
