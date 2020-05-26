@@ -2,7 +2,6 @@
 #pragma once
 
 #include "PointersTypedef.h"
-
 #include <QObject>
 
 namespace sp {

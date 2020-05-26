@@ -13,15 +13,14 @@ namespace sp {
 #define RecordMasterI RecordMaster::instance()
 
 /*************************************************************************//**
- * @brief Синглетон, работающий с записями Record в Storage.
+ * @brief Синглетон релизует CRUD-механику для Record.
  *
- * @details Класс умеет загружать, добавлять и удалять записи из Storage.
- * В то же время синглетон не хранит объекты Record. Они по своей сути
- * являются временным объектами, которые используются в GUI (к примеру
- * внутри модели RecordModel).
+ * @details Записи Record хранятся в Storage. Сам синглетон не хранит
+ * в оперативной памяти объекты Record, а лишь создаёт их передаёт управления
+ * ими наружу. Record по своей сути является временным объектом, который
+ * используются в GUI, к примеру внутри модели RecordModel.
  *
- * Однако же для создания записей используются конкретные мастера:
- * TextNoteMaster, ImageNoteMaster, LinkNoteMaster и т.д.
+ * @sa TextNoteMaster, Storage
  ****************************************************************************/
 class RecordMaster: public QObject
 {
@@ -32,7 +31,7 @@ class RecordMaster: public QObject
         static RecordMaster& instance();
 
         //--------------------------------------------------------------------
-        // Get
+        // GET
         //--------------------------------------------------------------------
         /** Возвращает список записей по тегу, загруженных из хранилища. */
         QVector<RecordPtr> get(const QString &tag, int limit, int offset = 0);
@@ -41,7 +40,7 @@ class RecordMaster: public QObject
         inline const QString &tableName() const { return _tableName; }
 
         //--------------------------------------------------------------------
-        // Special
+        // SPECIAL
         //--------------------------------------------------------------------
         /** Добавляет запись в хранилище. */
         void add(const RecordPtr &record);

@@ -37,11 +37,14 @@ void TextNoteMaster::create(const QString &text)
         printf("ERROR inserting data: %s\n", sqlite3_errmsg(StorageI.db()));
         return;
     } else {
-        // Создаём запись для текстовой заметки.
-        auto *textNote = new RecordContentPtr(new TextNote(text.trimmed()));
-        RecordPtr record(new Record(Record::TextType, *textNote));
+        // Create record for text note
+        // auto *textNote = new RecordContentPtr(new TextNote(text.trimmed())); // There is pointer on pointer for cache
+        auto *textNote = new RecordContentPtr(TextNotePtr::create(text.trimmed())); // There is pointer on pointer for cache
+        auto record = RecordPtr::create();
+        record->type(Record::TextType)
+              ->content(*textNote);
 
-        int rowid = sqlite3_last_insert_rowid(StorageI.db());
+        auto rowid = sqlite3_last_insert_rowid(StorageI.db());
         (*textNote)->setRowid(rowid);
         _notes.insert(rowid, textNote);
 
@@ -59,7 +62,7 @@ RecordContentPtr TextNoteMaster::get(int rowid)
         defer(sqlite3_finalize(stmt));
 
         QString query = "SELECT `text` from `" % _tableName % "` WHERE rowid = ?1";
-        sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
+        sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, nullptr);
         sqlite3_bind_int(stmt,1, rowid);
 
         for(;;) {
@@ -67,7 +70,7 @@ RecordContentPtr TextNoteMaster::get(int rowid)
 
             if (res == SQLITE_ROW) {
                 auto text = Storage::getString(stmt, 0);
-                auto *note = new RecordContentPtr(new TextNote(rowid, text));
+                auto *note = new RecordContentPtr(TextNotePtr::create(rowid, text));
                 _notes.insert(rowid, note);
 
                 return *note;

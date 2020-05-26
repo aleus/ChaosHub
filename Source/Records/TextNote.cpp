@@ -20,6 +20,7 @@ TextNote::TextNote(const QString &text)
 
 }
 
+//------------------------------------------------------------------------------
 TextNote::TextNote(int rowid, const QString &text)
     : RecordContent(rowid)
     , _text(text)
@@ -45,9 +46,8 @@ bool TextNote::remove()
 
     // TODO Вынести название таблицы в константы
     const char *query = "DELETE FROM `TextNotes` WHERE `rowid`=?1";
-    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, NULL);
-
-    sqlite3_bind_int(stmt, 1, rowid());
+    sqlite3_prepare_v2(StorageI.db(), query, -1, &stmt, nullptr);
+    sqlite3_bind_int64(stmt, 1, rowid());
 
     int rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {

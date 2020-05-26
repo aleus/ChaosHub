@@ -90,8 +90,8 @@ void Storage::openDb(const QString &filePath)
 
 //------------------------------------------------------------------------------
 void Storage::createTable(const QString &query) {
-    char *zErrMsg = 0;
-    int error = sqlite3_exec(StorageI.db(), query.toUtf8().data(), NULL, 0, &zErrMsg);
+    char *zErrMsg = nullptr;
+    int error = sqlite3_exec(StorageI.db(), query.toUtf8().data(), nullptr, nullptr, &zErrMsg);
     if (error) {
         qCritical() << "Can't create table: " << sqlite3_errmsg(StorageI.db()) << endl;
     }

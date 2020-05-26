@@ -1,6 +1,7 @@
 /// @author M. A. Serebrennikov
 #pragma once
 
+#include "AbstractRecord.h"
 #include "PointersTypedef.h"
 #include "RecordContent.h"
 
@@ -13,14 +14,22 @@ namespace sp {
 /***********************************************************************//**
  * @brief Класс записи для GUI.
  *
- * @details Record - это универсальный контейнер для пользовательской записи.
- * апись может содержать один из типов данных:
- * текстовая заметка (TextNote), изображение (ImageNote), ссылка на web-страницу
- * (Bookmark) и др. После создания записи тип записи не может быть заменен.
+ * @details Record - это универсальный контейнер для пользовательских записей.
+ * По своей сути является временным объектом, который используются в GUI,
+ * к примеру внутри модели RecordModel.
+ * Запись может содержать один из типов данных:
+ * - текстовая заметка (TextNote),
+ * - изображение (ImageNote),
+ * - ссылка на web-страницу (Bookmark) ,
+ * - другое...
  *
- * @sa RecordsModel, Storage
+ * Для создания новых объектов класса Record используются конкретные мастера:
+ * TextNoteMaster, ImageNoteMaster, LinkNoteMaster и т.д. После создания
+ * записи тип записи не может быть заменен.
+ *
+ * @sa RecordsModel, RecordContent, Tag
  ****************************************************************************/
-class Record: public QObject, public QEnableSharedFromThis<Record>
+class Record : public AbstractRecord, public QEnableSharedFromThis<Record>
 {
     Q_OBJECT
 
@@ -38,21 +47,8 @@ class Record: public QObject, public QEnableSharedFromThis<Record>
         };
         Q_ENUM(Type)
 
-        /**
-         * Конструктор для создания новой записи. Генерируется новый id,
-         * время записи указывается текущее
-         */
-        Record(Type type, const RecordContentPtr &content);
-
-        /** Конструктор для загрузки записи из хранилища. */
-        Record(const QUuid &id, Type type, const RecordContentPtr &content, const QDateTime &date);
-
-        // Копирующего и перемещеающего конструктора не должно быть, вся передача через RecordPtr.
-        Record(const Record &record) = delete;
-        Record(Record &&record) = delete;
-
         //----------------------------------------------------------------------
-        // Get
+        // GET
         //----------------------------------------------------------------------
         /** Возвращает id-шник записи. */
         inline const QUuid& id() const { return _id; }
@@ -69,7 +65,22 @@ class Record: public QObject, public QEnableSharedFromThis<Record>
         /** Возвращает дату создания в виде строки. */
         QString dateStr() const;
 
+        //----------------------------------------------------------------------
+        // SET
+        //----------------------------------------------------------------------
+        void setType(Type type);
+        inline Record* type(Type type) { setType(type); return this; }
+
+        void setContent(const RecordContentPtr &content);
+        inline Record* content(const RecordContentPtr &content) { setContent(content); return this; }
+
+        void setDate(const QDateTime &date);
+        inline Record* date(const QDateTime &date) { setDate(date); return this; }
+
     private:
+        friend class QSharedPointer<Record>;
+        using AbstractRecord::AbstractRecord;
+
         /** Возвращает голый указатель на содержимое записи. Используется в QML */
         inline RecordContent* contentRaw() const { return _content.data(); }
 

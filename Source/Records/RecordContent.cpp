@@ -11,14 +11,14 @@ RecordContent::RecordContent()
 }
 
 //------------------------------------------------------------------------------
-RecordContent::RecordContent(int rowid)
+RecordContent::RecordContent(int64_t rowid)
     : _rowid(rowid)
 {
     QQmlEngine::setObjectOwnership(this, QQmlEngine::CppOwnership);
 }
 
 //------------------------------------------------------------------------------
-void RecordContent::setRowid(int rowid)
+void RecordContent::setRowid(int64_t rowid)
 {
     _rowid = rowid;
 }

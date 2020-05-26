@@ -20,10 +20,6 @@ class TextNote: public RecordContent
     Q_PROPERTY(QString text READ text WRITE setText NOTIFY textChanged)
 
     public:
-        // TODO Возможно, нужно убрать в private
-        TextNote(const QString &text);
-        TextNote(int rowid, const QString &text);
-
         /** Возвращает текст заметки. */
         inline QString text() const { return _text.trimmed(); }
 
@@ -34,6 +30,13 @@ class TextNote: public RecordContent
         // Override
         //--------------------------------------------------------------------
         bool remove() override;
+
+    private:
+        friend class QSharedPointer<TextNote>;
+
+        // TODO Возможно, нужно убрать в private
+        TextNote(const QString &text);
+        TextNote(int rowid, const QString &text);
 
     signals:
         void textChanged();

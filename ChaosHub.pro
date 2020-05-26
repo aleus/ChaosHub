@@ -4,41 +4,50 @@ CONFIG += c++17
 
 INCLUDEPATH += \
     Source \
+    Source/Masters \
+    Source/Models \
+    Source/Records \
+    Source/TextSp \
+    Source/Tools \
 
-HEADERS += \ \
-    Source/Clipboard.h \
-    Source/Colors.h \
-    Source/Defer.h \
+HEADERS += \
+    Source/Masters/RecordMaster.h \
+    Source/Masters/TagMaster.h \
+    Source/Masters/TextNoteMaster.h \
+    Source/Models/RecordModel.h \
+    Source/Models/TagModel.h \
     Source/PointersTypedef.h \
-    Source/Record.h \
-    Source/RecordContent.h \
-    Source/RecordMaster.h \
-    Source/RecordModel.h \
+    Source/Records/AbstractRecord.h \
+    Source/Records/Category.h \
+    Source/Records/Record.h \
+    Source/Records/RecordContent.h \
+    Source/Records/Tag.h \
+    Source/Records/TextNote.h \
     Source/Storage.h \
-    Source/Tag.h \
-    Source/TagMaster.h \
-    Source/TagModel.h \
     Source/TextSp/TextHelper.h \
-    Source/TextNote.h \
-    Source/TextNoteMaster.h \
-    Source/Tools.h
+    Source/Tools/Clipboard.h \
+    Source/Tools/Colors.h \
+    Source/Tools/Defer.h \
+    Source/Tools/Tools.h
 
 SOURCES += \
-    Source/Clipboard.cpp \
-    Source/Colors.cpp \
+    Source/Category.cpp \
     Source/Main.cpp \
-    Source/Record.cpp \
-    Source/RecordContent.cpp \
-    Source/RecordMaster.cpp \
-    Source/RecordModel.cpp \
+    Source/Masters/RecordMaster.cpp \
+    Source/Masters/TagMaster.cpp \
+    Source/Masters/TextNoteMaster.cpp \
+    Source/Models/RecordModel.cpp \
+    Source/Models/TagModel.cpp \
+    Source/Records/AbstractRecord.cpp \
+    Source/Records/Record.cpp \
+    Source/Records/RecordContent.cpp \
+    Source/Records/Tag.cpp \
+    Source/Records/TextNote.cpp \
     Source/Storage.cpp \
-    Source/Tag.cpp \
-    Source/TagMaster.cpp \
-    Source/TagModel.cpp \
     Source/TextSp/TextHelper.cpp \
-    Source/TextNote.cpp \
-    Source/TextNoteMaster.cpp \
-    Source/Tools.cpp \
+    Source/Tools/Clipboard.cpp \
+    Source/Tools/Colors.cpp \
+    Source/Tools/Tools.cpp \
 
 RESOURCES += \
     Fonts/Fonts.qrc \

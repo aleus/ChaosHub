@@ -42,7 +42,6 @@ void TextHelper::setLineHeight(double lineHeight)
 //------------------------------------------------------------------------------
 void TextHelper::onContentsChange(int /*position*/, int /*charsRemoved*/, int /*charsAdded*/)
 {
-
     if (!_ready || !_textDocument) {
         return;
     }

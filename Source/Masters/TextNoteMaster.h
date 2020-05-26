@@ -41,8 +41,9 @@ class TextNoteMaster: public QObject
         TextNoteMaster() = default;
 
     private:
-        QCache<int, RecordContentPtr> _notes{1000}; // TODO После добавления класса Settings, вынести в настройки
         const QString _tableName = "TextNotes";
+        const static int _defaultCashCapacity = 1000; // TODO После добавления класса Settings, вынести в настройки
+        QCache<int64_t, RecordContentPtr> _notes{_defaultCashCapacity};
 };
 
 } // namespace sp

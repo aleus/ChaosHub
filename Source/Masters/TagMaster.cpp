@@ -24,19 +24,19 @@ QVector<TagPtr> TagMaster::get()
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 
-    QString query = "SELECT `name`, `id`, `parentId` from `" + _tableName + "` "
+    QString query = "SELECT `name`, `id`, from `" + _tableName + "` "
                     "ORDER BY `date` DESC";
-    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, nullptr);
 
     for(;;) {
         int res = sqlite3_step (stmt);
 
         if (res == SQLITE_ROW) {
-            auto name     = Storage::getString(stmt, 0);
-            auto id       = Storage::getId(stmt, 1); if (!id) { continue; }
-            auto parentId = Storage::getId(stmt, 2); if (!parentId) { continue; }
+            auto name = Storage::getString(stmt, 0);
+            auto id   = Storage::getId(stmt, 1); if (!id) { continue; }
+            auto tag  = TagPtr::create(*id);
 
-            TagPtr tag(new Tag(name, *id, *parentId));
+            tag->setName(name);
             result.append(tag);
         } else if (res == SQLITE_DONE) {
             break;
@@ -57,9 +57,9 @@ void TagMaster::append(const TagPtr &tag)
     sqlite3_stmt *stmt;
     defer(sqlite3_finalize(stmt));
 
-    QString query = "INSERT INTO `" + _tableName + "` (`name`, `id`, `parentId`) "
+    QString query = "INSERT INTO `" + _tableName + "` (`name`, `id`) "
                     "VALUES (?1, ?2, ?3)";
-    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, nullptr);
 
     // TODO На момент отладки принимаются человеческое представление UUID. Потом раскоментировать
     // sqlite3_bind_blob(stmt, 1, &record->id(), sizeof(QUuid), SQLITE_STATIC);
@@ -67,8 +67,6 @@ void TagMaster::append(const TagPtr &tag)
     sqlite3_bind_text(stmt, 2, buf.data(), buf.size(), SQLITE_STATIC);
     buf = tag->id().toByteArray();
     sqlite3_bind_blob(stmt, 2, buf.data(), buf.size(), SQLITE_STATIC);
-    buf = tag->parentId().toByteArray();
-    sqlite3_bind_blob(stmt, 3, buf.data(), buf.size(), SQLITE_STATIC);
 
     int rc = sqlite3_step(stmt);
     if (rc != SQLITE_DONE) {
@@ -101,8 +99,8 @@ void TagMaster::remove(const QVector<QUuid> &tags)
 void TagMaster::prepareStorage() const
 {
     auto createTable = [](const QString &query) {
-        char *zErrMsg = 0;
-        int error = sqlite3_exec(StorageI.db(), query.toUtf8().data(), NULL, 0, &zErrMsg);
+        char *zErrMsg = nullptr;
+        int error = sqlite3_exec(StorageI.db(), query.toUtf8().data(), nullptr, nullptr, &zErrMsg);
         if (error) {
             qCritical() << "Can't create table: " << sqlite3_errmsg(StorageI.db()) << endl;
         }
@@ -112,11 +110,9 @@ void TagMaster::prepareStorage() const
     createTable("CREATE TABLE IF NOT EXISTS `" + _tableName + "`("
                     "`name` TEXT"
                     ",`id` BLOB NOT NULL PRIMARY KEY"
-                    ",`parentId` BLOB"
                 ") WITHOUT ROWID;"
 
-                "CREATE INDEX IF NOT EXISTS `index_id` ON `Tags`(`id`);"
-                "CREATE INDEX IF NOT EXISTS `index_parentId` ON `Tags`(`parentId`);");
+                "CREATE INDEX IF NOT EXISTS `index_id` ON `Tags`(`id`);");
 
     // Заметки-Теги
     createTable("CREATE TABLE IF NOT EXISTS `" + _tableNameMath + "`("
@@ -141,7 +137,7 @@ void TagMaster::remove(Tag *tagRaw)
     defer(sqlite3_finalize(stmt));
 
     QString query = "DELETE FROM `" + _tableName + "` WHERE `id`=?1";
-    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, NULL);
+    sqlite3_prepare_v2(StorageI.db(), query.toUtf8().data(), -1, &stmt, nullptr);
 
     // TODO На момент отладки принимаются человеческое представление UUID. Потом раскоментировать
     // sqlite3_bind_blob(stmt, 1, &record->id(), sizeof(QUuid), SQLITE_STATIC);

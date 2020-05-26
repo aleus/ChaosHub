@@ -14,10 +14,10 @@ class RecordContent: public QObject
 
     public:
         /** Возвращает rowId в соотвествующей таблице. */
-        inline int rowid() const { return _rowid; }
+        inline int64_t rowid() const { return _rowid; }
 
         /** Устанавилвает rowid. */
-        void setRowid(int rowid);
+        void setRowid(int64_t rowid);
 
         /**
          * @brief Удаляет данные объекта из хранилища.
@@ -27,10 +27,10 @@ class RecordContent: public QObject
 
     protected:
         RecordContent();
-        RecordContent(int rowid);
+        RecordContent(int64_t rowid);
 
     protected:
-        int _rowid = -1;
+        int64_t _rowid = -1;
 };
 
 } // namespace sp

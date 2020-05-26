@@ -5052,7 +5052,7 @@ SQLITE_API void sqlite3_set_auxdata(sqlite3_context*, int N, void*, void (*)(voi
 typedef void (*sqlite3_destructor_type)(void*);
 // #define SQLITE_STATIC      ((sqlite3_destructor_type)0)
 // #define SQLITE_TRANSIENT   ((sqlite3_destructor_type)-1)
-#define SQLITE_STATIC      static_cast<sqlite3_destructor_type>(0)
+#define SQLITE_STATIC      static_cast<sqlite3_destructor_type>(nullptr)
 #define SQLITE_TRANSIENT   static_cast<sqlite3_destructor_type>(-1)
 
 /*

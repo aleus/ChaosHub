@@ -30,7 +30,6 @@ int main(int argc, char *argv[])
     auto context = engine.rootContext();
 
     // Тюнинг шрифтов
-    // QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
     QFontDatabase::addApplicationFont(":/Roboto-Black.ttf");
     QFontDatabase::addApplicationFont(":/Roboto-BlackItalic.ttf");
     QFontDatabase::addApplicationFont(":/Roboto-Bold.ttf");
@@ -46,7 +45,7 @@ int main(int argc, char *argv[])
 
     app.setFont(QFont("Roboto"));
 
-    // Debug!!!
+    // TODO Открывать последнии настройки, если они были проинициализрованы ранее.
     StorageI.openDb(QStringLiteral("Notes.db"));
     StorageI.prepareStorage();
 
